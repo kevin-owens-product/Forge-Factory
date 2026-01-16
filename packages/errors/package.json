@@ -1,0 +1,20 @@
+{
+  "name": "@forge/errors",
+  "version": "1.0.0",
+  "description": "Typed error codes and error handling for Forge Factory",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@forge/shared-types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "vitest": "^1.6.0"
+  }
+}
