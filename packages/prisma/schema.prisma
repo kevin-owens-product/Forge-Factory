@@ -1,0 +1,634 @@
+// Forge Factory - Prisma Schema
+// Multi-tenant PostgreSQL database with Row-Level Security
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_DIRECT_URL")
+}
+
+// ============================================
+// Core: Tenants
+// ============================================
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  region    String   // us-east-1, eu-west-1, etc.
+  status    TenantStatus @default(ACTIVE)
+
+  // Subscription
+  plan      String   @default("free")
+  trialEndsAt DateTime?
+
+  // Metadata
+  metadata  Json     @default("{}")
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  // Relations
+  users            User[]
+  organizations    Organization[]
+  sessions         Session[]
+  apiKeys          ApiKey[]
+  roles            Role[]
+  approvalPolicies ApprovalPolicy[]
+  approvalRequests ApprovalRequest[]
+  sandboxEnvironments SandboxEnvironment[]
+  auditLogs        AuditLog[]
+  siemConfigs      SiemConfig[]
+  samlConfigs      SamlConfig[]
+  scimConfigs      ScimConfig[]
+
+  @@index([slug])
+  @@index([region])
+  @@index([status])
+  @@map("tenants")
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED
+  TRIAL
+  CHURNED
+}
+
+// ============================================
+// Core: Users
+// ============================================
+
+model User {
+  id        String   @id @default(cuid())
+  tenantId  String
+
+  // Profile
+  email     String
+  firstName String?
+  lastName  String?
+  avatar    String?
+  locale    String   @default("en-US")
+  timezone  String   @default("UTC")
+
+  // Authentication
+  passwordHash String?
+  emailVerified Boolean @default(false)
+  emailVerifiedAt DateTime?
+  mfaEnabled Boolean @default(false)
+  mfaSecret  String?
+
+  // Status
+  status    UserStatus @default(ACTIVE)
+  lastLoginAt DateTime?
+
+  // Metadata
+  metadata  Json     @default("{}")
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String?
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sessions  Session[]
+  userRoles UserRole[]
+  apiKeys   ApiKey[]
+  createdOrganizations Organization[] @relation("OrganizationCreator")
+  approvalRequestsCreated ApprovalRequest[] @relation("ApprovalRequestCreator")
+  approvals Approval[]
+  auditLogs AuditLog[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@index([email])
+  @@index([status])
+  @@map("users")
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DELETED
+}
+
+// ============================================
+// Core: Sessions
+// ============================================
+
+model Session {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+
+  // Session data
+  token     String   @unique
+  deviceInfo Json
+  ipAddress String
+  userAgent String
+
+  // Lifecycle
+  expiresAt DateTime
+  revokedAt DateTime?
+  lastActiveAt DateTime @default(now())
+
+  // Audit
+  createdAt DateTime @default(now())
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+// ============================================
+// Core: API Keys
+// ============================================
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+
+  // Key data
+  name      String
+  prefix    String   @unique
+  hashedKey String   @unique
+  scopes    String[] @default([])
+  ipAllowlist String[] @default([])
+
+  // Usage
+  lastUsedAt DateTime?
+  expiresAt  DateTime?
+
+  // Audit
+  createdAt DateTime @default(now())
+  createdBy String
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([userId])
+  @@index([prefix])
+  @@map("api_keys")
+}
+
+// ============================================
+// Roles & Permissions
+// ============================================
+
+model Role {
+  id        String   @id @default(cuid())
+  tenantId  String
+
+  // Metadata
+  name      String
+  description String?
+  color     String   @default("#6B7280")
+  icon      String?
+
+  // Permissions
+  permissions String[] @default([])
+
+  // System role flags
+  isSystem  Boolean  @default(false)
+  isDefault Boolean  @default(false)
+
+  // Hierarchy
+  inheritsFrom String?
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String
+  updatedBy String?
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userRoles UserRole[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+  @@index([isSystem])
+  @@map("roles")
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+
+  // Audit
+  assignedAt DateTime @default(now())
+  assignedBy String
+
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, roleId])
+  @@index([userId])
+  @@index([roleId])
+  @@map("user_roles")
+}
+
+// ============================================
+// Approval Workflows
+// ============================================
+
+model ApprovalPolicy {
+  id        String   @id @default(cuid())
+  tenantId  String
+
+  // Trigger
+  name      String
+  description String?
+  triggerAction String
+
+  // Conditions
+  conditions Json?
+
+  // Approvers
+  approverType String // 'role' | 'user' | 'manager' | 'custom'
+  approverRoleId String?
+  approverUserIds String[] @default([])
+
+  // Settings
+  requiredApprovals Int @default(1)
+  autoApproveAfter Int? // hours
+  autoRejectAfter Int? // hours
+  allowSelfApproval Boolean @default(false)
+
+  // Notifications
+  notifyOnRequest Boolean @default(true)
+  notifyOnApproval Boolean @default(true)
+  notifyOnRejection Boolean @default(true)
+
+  // Status
+  enabled   Boolean  @default(true)
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requests  ApprovalRequest[]
+
+  @@unique([tenantId, triggerAction])
+  @@index([tenantId])
+  @@index([enabled])
+  @@map("approval_policies")
+}
+
+model ApprovalRequest {
+  id        String   @id @default(cuid())
+  tenantId  String
+  policyId  String
+
+  // Request details
+  action    String
+  resourceType String
+  resourceId String
+  requestedChanges Json
+  justification String?
+
+  // Requester
+  requestedBy String
+  requestedAt DateTime @default(now())
+
+  // Status
+  status    ApprovalStatus @default(PENDING)
+
+  // Approvals
+  requiredApprovals Int
+
+  // Resolution
+  resolvedAt DateTime?
+  resolvedBy String?
+  resolutionNote String?
+
+  // Execution
+  executedAt DateTime?
+  executionError String?
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy    ApprovalPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  requester User     @relation("ApprovalRequestCreator", fields: [requestedBy], references: [id])
+  approvals Approval[]
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([requestedBy])
+  @@map("approval_requests")
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+  CANCELLED
+}
+
+model Approval {
+  id        String   @id @default(cuid())
+  requestId String
+  approverId String
+
+  // Decision
+  decision  String // 'approved' | 'rejected'
+  decidedAt DateTime @default(now())
+  note      String?
+
+  // Relations
+  request   ApprovalRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  approver  User     @relation(fields: [approverId], references: [id])
+
+  @@unique([requestId, approverId])
+  @@index([requestId])
+  @@index([approverId])
+  @@map("approvals")
+}
+
+// ============================================
+// Sandbox Environments
+// ============================================
+
+model SandboxEnvironment {
+  id        String   @id @default(cuid())
+  tenantId  String
+
+  // Metadata
+  name      String
+  description String?
+  type      SandboxType
+
+  // Lifecycle
+  status    SandboxStatus @default(CREATING)
+  expiresAt DateTime
+  lastAccessedAt DateTime?
+
+  // Data
+  seedDataSet String @default("minimal")
+  dataIsolationLevel String @default("full")
+
+  // Access
+  createdBy String
+  accessibleBy String[] @default([])
+  publicAccessToken String? @unique
+
+  // Limits
+  maxUsers  Int      @default(5)
+  maxApiCalls Int    @default(10000)
+
+  // Reset
+  autoResetInterval Int? // hours
+  lastResetAt DateTime?
+
+  // Audit
+  createdAt DateTime @default(now())
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([status])
+  @@index([publicAccessToken])
+  @@map("sandbox_environments")
+}
+
+enum SandboxType {
+  TRIAL
+  DEMO
+  DEVELOPMENT
+  TRAINING
+}
+
+enum SandboxStatus {
+  CREATING
+  ACTIVE
+  EXPIRED
+  DELETED
+}
+
+// ============================================
+// SIEM Integration
+// ============================================
+
+model SiemConfig {
+  id        String   @id @default(cuid())
+  tenantId  String   @unique
+
+  enabled   Boolean  @default(false)
+
+  // Destination
+  destinationType String // 'splunk' | 'datadog' | 'elastic' | etc.
+  destinationConfig Json
+
+  // Filtering
+  eventTypes String[] @default([])
+  minSeverity String @default("info")
+
+  // Format
+  format    String   @default("json")
+  includeRawPayload Boolean @default(false)
+
+  // Delivery
+  batchSize Int      @default(100)
+  flushIntervalSeconds Int @default(60)
+
+  // Status
+  lastExportAt DateTime?
+  lastExportStatus String @default("success")
+  lastError String?
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("siem_configs")
+}
+
+// ============================================
+// SSO Configuration
+// ============================================
+
+model SamlConfig {
+  id        String   @id @default(cuid())
+  tenantId  String   @unique
+
+  enabled   Boolean  @default(false)
+
+  // IdP Configuration
+  idpEntityId String
+  idpSsoUrl String
+  idpCertificate String @db.Text
+
+  // SP Configuration
+  spEntityId String
+  spAcsUrl  String
+
+  // Attribute Mapping
+  attributeMapping Json
+
+  // Settings
+  defaultRoleId String
+  jitProvisioning Boolean @default(true)
+  forceSso Boolean @default(false)
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("saml_configs")
+}
+
+model ScimConfig {
+  id        String   @id @default(cuid())
+  tenantId  String   @unique
+
+  enabled   Boolean  @default(false)
+
+  bearerToken String @unique
+  baseUrl   String
+
+  syncGroups Boolean @default(true)
+  groupToRoleMapping Json @default("{}")
+
+  // Sync Status
+  lastSyncAt DateTime?
+  syncStatus String @default("idle")
+  userCount Int      @default(0)
+  groupCount Int     @default(0)
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([bearerToken])
+  @@map("scim_configs")
+}
+
+// ============================================
+// Organizations (First Feature)
+// ============================================
+
+model Organization {
+  id        String   @id @default(cuid())
+  tenantId  String
+
+  // Data
+  name      String
+  slug      String
+  description String?
+  logo      String?
+  website   String?
+
+  // Status
+  status    OrgStatus @default(ACTIVE)
+  archivedAt DateTime?
+
+  // Metadata
+  metadata  Json     @default("{}")
+
+  // Audit
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  createdBy String
+  updatedBy String?
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  creator   User     @relation("OrganizationCreator", fields: [createdBy], references: [id])
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@index([status])
+  @@index([createdBy])
+  @@map("organizations")
+}
+
+enum OrgStatus {
+  ACTIVE
+  ARCHIVED
+  SUSPENDED
+}
+
+// ============================================
+// Audit Logs
+// ============================================
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+
+  // Event
+  eventType String
+  severity  String   @default("info")
+  timestamp DateTime @default(now())
+
+  // Actor
+  actorType String // 'user' | 'api_key' | 'system' | 'admin'
+  actorId   String
+  actorEmail String?
+  ipAddress String?
+  userAgent String?
+
+  // Resource
+  resourceType String
+  resourceId String
+  resourceName String?
+
+  // Details
+  action    String
+  outcome   String   @default("success")
+  changes   Json?
+
+  // Context
+  requestId String
+  sessionId String?
+  geoLocation Json?
+
+  // Raw (optional)
+  rawPayload Json?
+
+  // Relations
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  actor     User?    @relation(fields: [actorId], references: [id])
+
+  @@index([tenantId])
+  @@index([eventType])
+  @@index([timestamp])
+  @@index([actorId])
+  @@index([resourceType, resourceId])
+  @@map("audit_logs")
+}
