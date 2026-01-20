@@ -917,6 +917,13 @@ export default async function ChangeRequestsPage() {
 - [GitHub Protected Branches](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches)
 - ADR-019: Enterprise Customer Management
 - ADR-023: Version History & Time Travel UI
+- ADR-027: Digital Transformation Playbook (uses change management)
+- ADR-028: Legacy System Modernization Playbook (uses change management)
+- ADR-029: Cloud Migration & Hybrid Cloud Playbook (uses change management)
+- ADR-030: DevOps & Platform Engineering Transformation (uses change management)
+- ADR-031: Microservices & DDD Transformation (uses change management)
+- ADR-032: Security & Compliance Transformation (uses change management)
+- ADR-033: M&A Code Consolidation Playbook (uses change management)
 
 ## Review Date
 April 2026 (3 months)

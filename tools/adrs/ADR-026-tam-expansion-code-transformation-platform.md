@@ -623,6 +623,13 @@ Transform Forge Factory from **"SaaS development platform"** into **"Enterprise 
 - ADR-019: Enterprise Customer Management
 - ADR-024: Change Management for Code Transformations
 - ADR-025: ROI Tracking for Code Transformations
+- ADR-027: Digital Transformation Playbook (expands TAM to transformation programs)
+- ADR-028: Legacy System Modernization Playbook ($50B market opportunity)
+- ADR-029: Cloud Migration & Hybrid Cloud Playbook ($45B migration services market)
+- ADR-030: DevOps & Platform Engineering Transformation ($5-10M platform investments)
+- ADR-031: Microservices & DDD Transformation (85% enterprise adoption)
+- ADR-032: Security & Compliance Transformation (SOC 2, HIPAA, PCI-DSS compliance)
+- ADR-033: M&A Code Consolidation Playbook ($3.7T M&A market)
 
 ## Review Date
 April 2026 (3 months)

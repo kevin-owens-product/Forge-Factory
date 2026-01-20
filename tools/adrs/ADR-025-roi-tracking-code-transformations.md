@@ -846,6 +846,13 @@ export async function ROIDetailPage({ roiId }: { roiId: string }) {
 - [IEEE: Test Coverage ROI](https://ieeexplore.ieee.org/document/8952365)
 - ADR-024: Change Management for Code Transformations
 - ADR-019: Enterprise Customer Management
+- ADR-027: Digital Transformation Playbook (tracks ROI for transformation programs)
+- ADR-028: Legacy System Modernization Playbook (includes ROI estimates)
+- ADR-029: Cloud Migration & Hybrid Cloud Playbook (cost optimization & ROI)
+- ADR-030: DevOps & Platform Engineering Transformation (DORA metrics & business value)
+- ADR-031: Microservices & DDD Transformation (business value tracking)
+- ADR-032: Security & Compliance Transformation (risk reduction ROI)
+- ADR-033: M&A Code Consolidation Playbook (synergy realization tracking)
 
 ## Review Date
 April 2026 (3 months)
