@@ -84,22 +84,24 @@ This will start:
 forge-factory/
 ├── apps/
 │   ├── api/                 # NestJS API server
-│   ├── portal/              # Customer React SPA
-│   ├── admin/               # Operations React Admin
-│   └── docs/                # API documentation
+│   ├── portal/              # Customer React SPA (Next.js)
+│   └── admin/               # Operations Admin dashboard (Next.js)
 ├── packages/
-│   ├── auth/                # Authentication & authorization
-│   ├── billing/             # Stripe integration
-│   ├── roles/               # Custom roles & permissions
-│   ├── approvals/           # Approval workflows
-│   ├── sandbox/             # Demo environments
-│   ├── siem/                # Audit log export
-│   └── [30+ more packages]
+│   ├── prisma/              # Database schema & migrations
+│   ├── shared-types/        # Shared TypeScript types
+│   ├── ui/                  # Shared UI components (shadcn/ui)
+│   ├── errors/              # Error handling utilities
+│   └── [30+ more packages]  # Auth, billing, roles, etc.
+├── docs/                    # 📚 All documentation
+│   ├── 00-overview/         # Business & methodology
+│   ├── 01-product/          # Product specifications
+│   ├── 02-architecture/     # Technical architecture & ADRs
+│   ├── 03-features/         # Feature specifications
+│   ├── 04-development/      # Developer guides
+│   └── 05-operations/       # Operations & runbooks
 ├── tools/
-│   ├── adrs/                # Architecture Decision Records
 │   ├── terraform/           # Infrastructure as Code
-│   ├── prompts/             # AI prompt library
-│   └── runbooks/            # Incident response
+│   └── scripts/             # Automation scripts
 └── [config files]
 ```
 
@@ -276,12 +278,29 @@ PostgreSQL (200 max connections)
 
 ## Documentation
 
-- [The Forge Method v4.1](./the-forge-method-v4.1.md) - Technical methodology
-- [The Forge Factory](./the-forge-factory-complete.md) - Business operations
-- [Architecture Decision Records](./tools/adrs/) - Design decisions
-- [API Documentation](http://localhost:3000/api/docs) - OpenAPI spec
-- [Security Policy](./SECURITY.md) - Security guidelines
+**[📚 Documentation Home](./docs/README.md)** - Complete documentation index
+
+### Quick Links
+
+**For Developers:**
+- [Development Guide](./docs/04-development/README.md) - Setup, workflow, standards
+- [Architecture Overview](./docs/02-architecture/README.md) - System design
+- [ADRs](./docs/02-architecture/decisions/README.md) - Architecture decisions
 - [Claude Conventions](./CLAUDE.md) - AI-assisted development
+
+**For Product & Business:**
+- [The Forge Method](./docs/00-overview/the-forge-method.md) - Development methodology
+- [The Forge Factory](./docs/00-overview/the-forge-factory.md) - Business operations
+- [Product Specification](./docs/01-product/product-spec.md) - Feature requirements
+- [Feature Designs](./docs/03-features/README.md) - Detailed feature specs
+
+**For Operations:**
+- [Operations Guide](./docs/05-operations/README.md) - Deployment, monitoring, runbooks
+- [Security Policy](./SECURITY.md) - Security guidelines & reporting
+- [Infrastructure](./tools/terraform/README.md) - Terraform IaC
+
+**API Documentation:**
+- [API Docs](http://localhost:3000/api/docs) - OpenAPI/Swagger (when running)
 
 ## Contributing
 
