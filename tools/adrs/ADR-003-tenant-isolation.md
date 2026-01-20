@@ -1,4 +1,4 @@
-# ADR-002: Tenant Isolation Strategy
+# ADR-003: Tenant Isolation Strategy
 
 ## Status
 Accepted
