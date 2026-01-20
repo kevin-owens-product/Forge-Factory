@@ -1029,6 +1029,12 @@ export function DataTable<T>({
 - ADR-002: Tenant Isolation Strategy
 - ADR-010: Frontend Architecture
 - ADR-011: State Management
+- ADR-019: Enterprise Customer Management
+- ADR-020: Super Admin Portal & Platform Administration
+- ADR-026: Enterprise Customer Onboarding Automation
+- ADR-027: Enterprise Customer Health Monitoring & Predictive Analytics
+- ADR-028: Enterprise Customer Expansion & Upsell Engine
+- ADR-029: Enterprise Support Ticket Management & SLA Compliance
 - [Security & Compliance](/docs/technical/security-compliance.md)
 
 ## Review Date

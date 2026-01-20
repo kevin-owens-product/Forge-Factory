@@ -1192,6 +1192,10 @@ export async function CustomerDetailPage({ customerId }: { customerId: string })
 ### Internal References
 - ADR-002: Tenant Isolation Strategy
 - ADR-014: Admin Portal - Multi-Tenant Management
+- ADR-026: Enterprise Customer Onboarding Automation
+- ADR-027: Enterprise Customer Health Monitoring & Predictive Analytics
+- ADR-028: Enterprise Customer Expansion & Upsell Engine
+- ADR-029: Enterprise Support Ticket Management & SLA Compliance
 - [Security & Compliance](/docs/technical/security-compliance.md)
 
 ## Review Date
