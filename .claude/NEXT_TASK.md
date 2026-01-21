@@ -7,42 +7,45 @@
 
 ## Current Task
 
-**Build `@forge/cache` package**
+**Build `@forge/storage` package**
 
 ### Instructions
 
-Create the Redis caching wrapper package for Forge Factory.
+Create the S3/R2 object storage wrapper package for Forge Factory.
 
 **Files to Create:**
 ```
-packages/cache/
+packages/storage/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── cache.service.ts      # Main cache service class
-│   ├── cache.types.ts        # TypeScript interfaces
-│   ├── redis-client.ts       # Redis connection management
-│   └── serialization.ts      # Serialization utilities
+│   ├── storage.service.ts    # Main storage service class
+│   ├── storage.types.ts      # TypeScript interfaces
+│   ├── s3-client.ts          # S3/R2 client wrapper
+│   ├── file-utils.ts         # File utilities and helpers
+│   └── presigned.ts          # Presigned URL generation
 ├── __tests__/
-│   └── cache.service.test.ts
+│   └── storage.service.test.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
 **Requirements:**
-- Redis connection management with configurable options
-- Get/Set/Delete operations with TTL support
-- JSON serialization/deserialization
-- Namespace support for tenant isolation
-- Health check method
-- Connection pooling support
-- Graceful shutdown support
+- S3-compatible storage abstraction (works with AWS S3 and Cloudflare R2)
+- Upload, download, delete operations
+- Multipart upload support for large files
+- Presigned URL generation for direct uploads/downloads
+- File metadata retrieval
+- Bucket operations (list, create, check existence)
+- MIME type detection
+- Stream support for large files
+- Multi-tenant support with prefix isolation
 - 80%+ test coverage
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(cache): add @forge/cache package"`
+3. Commit: `git add . && git commit -m "feat(storage): add @forge/storage package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -52,9 +55,9 @@ packages/cache/
 
 ### Phase 1: Foundation
 - [x] @forge/database ← COMPLETED
-- [ ] @forge/cache (Redis wrapper) ← CURRENT
-- [ ] @forge/queue (BullMQ wrapper)
-- [ ] @forge/storage (S3/R2 wrapper)
+- [x] @forge/cache (Redis wrapper) ← COMPLETED
+- [x] @forge/queue (BullMQ wrapper) ← COMPLETED
+- [ ] @forge/storage (S3/R2 wrapper) ← CURRENT
 
 ### Phase 2: Security
 - [ ] @forge/auth (Authentication core)
@@ -79,6 +82,62 @@ packages/cache/
 ---
 
 ## Completed
+
+### @forge/queue - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/queue/src/index.ts
+- packages/queue/src/queue.service.ts
+- packages/queue/src/queue.types.ts
+- packages/queue/src/worker.ts
+- packages/queue/src/job.ts
+- packages/queue/src/scheduler.ts
+- packages/queue/src/external.d.ts
+- packages/queue/__tests__/queue.service.test.ts
+- packages/queue/package.json
+- packages/queue/tsconfig.json
+- packages/queue/vitest.setup.ts
+- packages/queue/README.md
+
+**Features Implemented:**
+- BullMQ queue abstraction with configurable options
+- Job creation with priority, delay, and retry support
+- Worker management with concurrency control
+- Worker pools for scaling
+- Event listeners for job lifecycle (completed, failed, progress)
+- Scheduled/recurring jobs support with cron patterns
+- Job cleanup and retention policies
+- Graceful shutdown for workers
+- Multi-tenant support with namespace isolation
+- Health checks with queue statistics
+- 153 tests, 87.75% coverage
+
+### @forge/cache - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/cache/src/index.ts
+- packages/cache/src/cache.service.ts
+- packages/cache/src/cache.types.ts
+- packages/cache/src/redis-client.ts
+- packages/cache/src/serialization.ts
+- packages/cache/src/external.d.ts
+- packages/cache/__tests__/cache.service.test.ts
+- packages/cache/package.json
+- packages/cache/tsconfig.json
+- packages/cache/vitest.setup.ts
+- packages/cache/README.md
+
+**Features Implemented:**
+- Redis connection management with configurable options
+- Get/Set/Delete operations with TTL support
+- Full JSON serialization (Date, Buffer, Set, Map, BigInt)
+- Namespace support for tenant isolation
+- Batch operations (getMany, setMany, deleteMany)
+- Distributed locking with acquire/release
+- Health check with server info
+- Statistics tracking (hits, misses, hit rate, latency)
+- Graceful shutdown support
+- 102 tests, 81.22% coverage
 
 ### @forge/database - COMPLETED 2026-01-21
 

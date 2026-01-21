@@ -1,0 +1,39 @@
+{
+  "name": "@forge/cache",
+  "version": "1.0.0",
+  "description": "Redis caching wrapper for Forge Factory",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@forge/errors": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "typescript": "^5.6.0",
+    "vitest": "^1.6.0"
+  },
+  "peerDependencies": {
+    "ioredis": "^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "ioredis": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "forge",
+    "cache",
+    "redis",
+    "caching"
+  ],
+  "author": "",
+  "license": "ISC"
+}

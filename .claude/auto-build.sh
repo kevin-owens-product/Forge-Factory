@@ -68,6 +68,8 @@ is_build_complete() {
 run_session() {
     local session_num=$1
     local log_file="$LOG_DIR/session-$(printf '%03d' $session_num)-$(date +%Y%m%d-%H%M%S).log"
+    local max_retries=3
+    local retry=0
 
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -88,90 +90,108 @@ run_session() {
         return 0
     fi
 
-    # The prompt for Claude (kept short to avoid arg length limits)
+    # The prompt for Claude
     local prompt="Autonomous build session. Read .claude/NEXT_TASK.md and complete the current task: build the package, add tests (80%+ coverage), run quality checks, commit, push. Then update NEXT_TASK.md with the next task from the queue. Stay focused on ONE task only."
 
-    # Run Claude with the prompt as argument
-    # Using --permission-mode bypassPermissions for automation
-    # Note: Avoid piping to tee as it causes hanging issues
+    # Retry loop
+    while [ $retry -lt $max_retries ]; do
+        retry=$((retry + 1))
 
-    # Start claude in background
-    claude -p "$prompt" --permission-mode bypassPermissions 2>&1 > "$log_file" &
-    local claude_pid=$!
+        if [ $retry -gt 1 ]; then
+            echo "  ⚠️  Retry attempt $retry of $max_retries..."
+            sleep 2
+        fi
 
-    # Cute worker animation while waiting
-    local frames=(
-        "  🏭 [🧑‍💻·····💻·····💻·····💻] Building..."
-        "  🏭 [·🧑‍💻····💻·····💻·····💻] Building..."
-        "  🏭 [··🧑‍💻···💻·····💻·····💻] Building..."
-        "  🏭 [···🧑‍💻··💻·····💻·····💻] Building..."
-        "  🏭 [····🧑‍💻·💻·····💻·····💻] Building..."
-        "  🏭 [·····🧑‍💻💻·····💻·····💻] Typing..."
-        "  🏭 [·····💻🧑‍💻····💻·····💻] Moving..."
-        "  🏭 [·····💻·🧑‍💻···💻·····💻] Building..."
-        "  🏭 [·····💻··🧑‍💻··💻·····💻] Building..."
-        "  🏭 [·····💻···🧑‍💻·💻·····💻] Building..."
-        "  🏭 [·····💻····🧑‍💻💻·····💻] Typing..."
-        "  🏭 [·····💻·····💻🧑‍💻····💻] Moving..."
-        "  🏭 [·····💻·····💻·🧑‍💻···💻] Building..."
-        "  🏭 [·····💻·····💻··🧑‍💻··💻] Building..."
-        "  🏭 [·····💻·····💻···🧑‍💻·💻] Building..."
-        "  🏭 [·····💻·····💻····🧑‍💻💻] Typing..."
-        "  🏭 [·····💻·····💻·····💻🧑‍💻] Done! ✨"
-        "  🏭 [·····💻·····💻····🧑‍💻💻] Walking back..."
-        "  🏭 [·····💻·····💻···🧑‍💻·💻] Building..."
-        "  🏭 [·····💻·····💻··🧑‍💻··💻] Building..."
-        "  🏭 [·····💻·····💻·🧑‍💻···💻] Building..."
-        "  🏭 [·····💻·····💻🧑‍💻····💻] Moving..."
-        "  🏭 [·····💻····🧑‍💻💻·····💻] Building..."
-        "  🏭 [·····💻···🧑‍💻·💻·····💻] Building..."
-        "  🏭 [·····💻··🧑‍💻··💻·····💻] Building..."
-        "  🏭 [·····💻·🧑‍💻···💻·····💻] Building..."
-        "  🏭 [·····💻🧑‍💻····💻·····💻] Moving..."
-        "  🏭 [····🧑‍💻·💻·····💻·····💻] Building..."
-        "  🏭 [···🧑‍💻··💻·····💻·····💻] Building..."
-        "  🏭 [··🧑‍💻···💻·····💻·····💻] Building..."
-        "  🏭 [·🧑‍💻····💻·····💻·····💻] Building..."
-        "  🏭 [🧑‍💻·····💻·····💻·····💻] Starting over..."
-    )
-    local frame_count=${#frames[@]}
-    local i=0
+        # Start claude in background (without --permission-mode which may cause issues)
+        claude -p "$prompt" 2>&1 > "$log_file" &
+        local claude_pid=$!
 
-    echo ""
-    while kill -0 $claude_pid 2>/dev/null; do
-        printf "\r${frames[$i]}"
-        i=$(( (i+1) % frame_count ))
-        sleep 0.15
+        # Cute worker animation while waiting
+        local frames=(
+            "  🏭 [🧑‍💻·····💻·····💻·····💻] Building..."
+            "  🏭 [·🧑‍💻····💻·····💻·····💻] Building..."
+            "  🏭 [··🧑‍💻···💻·····💻·····💻] Building..."
+            "  🏭 [···🧑‍💻··💻·····💻·····💻] Building..."
+            "  🏭 [····🧑‍💻·💻·····💻·····💻] Building..."
+            "  🏭 [·····🧑‍💻💻·····💻·····💻] Typing..."
+            "  🏭 [·····💻🧑‍💻····💻·····💻] Moving..."
+            "  🏭 [·····💻·🧑‍💻···💻·····💻] Building..."
+            "  🏭 [·····💻··🧑‍💻··💻·····💻] Building..."
+            "  🏭 [·····💻···🧑‍💻·💻·····💻] Building..."
+            "  🏭 [·····💻····🧑‍💻💻·····💻] Typing..."
+            "  🏭 [·····💻·····💻🧑‍💻····💻] Moving..."
+            "  🏭 [·····💻·····💻·🧑‍💻···💻] Building..."
+            "  🏭 [·····💻·····💻··🧑‍💻··💻] Building..."
+            "  🏭 [·····💻·····💻···🧑‍💻·💻] Building..."
+            "  🏭 [·····💻·····💻····🧑‍💻💻] Typing..."
+            "  🏭 [·····💻·····💻·····💻🧑‍💻] Done! ✨"
+            "  🏭 [·····💻·····💻····🧑‍💻💻] Walking back..."
+            "  🏭 [·····💻·····💻···🧑‍💻·💻] Building..."
+            "  🏭 [·····💻·····💻··🧑‍💻··💻] Building..."
+            "  🏭 [·····💻·····💻·🧑‍💻···💻] Building..."
+            "  🏭 [·····💻·····💻🧑‍💻····💻] Moving..."
+            "  🏭 [·····💻····🧑‍💻💻·····💻] Building..."
+            "  🏭 [·····💻···🧑‍💻·💻·····💻] Building..."
+            "  🏭 [·····💻··🧑‍💻··💻·····💻] Building..."
+            "  🏭 [·····💻·🧑‍💻···💻·····💻] Building..."
+            "  🏭 [·····💻🧑‍💻····💻·····💻] Moving..."
+            "  🏭 [····🧑‍💻·💻·····💻·····💻] Building..."
+            "  🏭 [···🧑‍💻··💻·····💻·····💻] Building..."
+            "  🏭 [··🧑‍💻···💻·····💻·····💻] Building..."
+            "  🏭 [·🧑‍💻····💻·····💻·····💻] Building..."
+            "  🏭 [🧑‍💻·····💻·····💻·····💻] Starting over..."
+        )
+        local frame_count=${#frames[@]}
+        local i=0
+
+        echo ""
+        while kill -0 $claude_pid 2>/dev/null; do
+            printf "\r${frames[$i]}"
+            i=$(( (i+1) % frame_count ))
+            sleep 0.15
+        done
+
+        # Get exit code
+        wait $claude_pid
+        local exit_code=$?
+
+        # Clear spinner line
+        printf "\r                                                    \r"
+
+        # Check if log has content (successful response)
+        if [ -s "$log_file" ] && ! grep -q "No messages returned" "$log_file"; then
+            # Success!
+            printf "  ✅ Claude finished!          \n"
+
+            # Show summary from log (last 20 lines)
+            echo ""
+            echo "  📋 Session Summary:"
+            echo "  ─────────────────────────────────────"
+            tail -20 "$log_file" | sed 's/^/  /'
+            echo "  ─────────────────────────────────────"
+            echo "  📁 Full log: $log_file"
+
+            # Give a moment for git operations to complete
+            sleep 2
+
+            # Pull any changes
+            git pull --rebase 2>/dev/null || true
+
+            return 0
+        else
+            echo "  ❌ API error (attempt $retry/$max_retries)"
+            if [ $retry -lt $max_retries ]; then
+                echo "  Waiting before retry..."
+                sleep 5
+            fi
+        fi
     done
 
-    # Get exit code
-    wait $claude_pid
-    local exit_code=$?
-
-    # Clear spinner line and show completion
-    printf "\r  ✅ Claude finished!          \n"
-
-    # Show summary from log (last 20 lines)
+    # All retries failed
     echo ""
-    echo "  📋 Session Summary:"
-    echo "  ─────────────────────────────────────"
-    tail -20 "$log_file" | sed 's/^/  /'
-    echo "  ─────────────────────────────────────"
-    echo "  📁 Full log: $log_file"
-
-    if [ $exit_code -ne 0 ]; then
-        echo ""
-        echo "WARNING: Session exited with code $exit_code"
-        echo "Check log: $log_file"
-    fi
-
-    # Give a moment for git operations to complete
-    sleep 2
-
-    # Pull any changes (in case of race conditions)
-    git pull --rebase 2>/dev/null || true
-
-    return $exit_code
+    echo "  ⛔ All $max_retries attempts failed"
+    echo "  Try running manually: claude -p \"$prompt\""
+    return 1
 }
 
 # Main loop
