@@ -1572,6 +1572,10 @@ function RequestEmergencyAccessDialog() {
 - ADR-019: Enterprise Customer Management
 - ADR-021: Multi-Compliance Framework Support
 - ADR-022: Feature Flagging System
+- ADR-026: Enterprise Customer Onboarding Automation
+- ADR-027: Enterprise Customer Health Monitoring & Predictive Analytics
+- ADR-028: Enterprise Customer Expansion & Upsell Engine
+- ADR-029: Enterprise Support Ticket Management & SLA Compliance
 
 ## Review Date
 April 2026 (3 months)

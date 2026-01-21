@@ -838,6 +838,40 @@ export async function ROIDetailPage({ roiId }: { roiId: string }) {
 - **Executive Satisfaction**: 90%+ of executives satisfied with ROI visibility
 - **Sales Wins**: 5+ new enterprise deals closed using ROI case studies
 
+## Multi-Organization ROI Aggregation
+
+For enterprise transformations spanning multiple organizations, the ROI tracking system supports aggregated reporting:
+
+```typescript
+interface MultiOrgROIReport {
+  transformationGroupId: string;
+  playbookType: TransformationPlaybookType;
+
+  organizations: OrganizationROI[];
+  aggregatedROI: AggregatedROIMetrics;
+  synergyCapture: SynergyMetrics;  // For M&A scenarios
+}
+
+interface AggregatedROIMetrics {
+  totalValueGenerated: number;
+  totalCostInvested: number;
+  overallROI: number;
+  organizationBreakdown: Record<string, ROIBreakdown>;
+}
+```
+
+## Related ADRs
+
+- ADR-024: Transformation Project Lifecycle Management
+- ADR-019: Enterprise Customer Management
+- ADR-031: Digital Transformation Playbook
+- ADR-032: Legacy System Modernization Playbook
+- ADR-033: Cloud Migration & Hybrid Cloud Playbook
+- ADR-034: DevOps & Platform Engineering Transformation Playbook
+- ADR-035: Microservices & DDD Transformation Playbook
+- ADR-036: Security & Compliance Transformation Playbook
+- ADR-037: M&A Code Consolidation Playbook
+
 ## References
 
 - [Gartner: The Cost of Technical Debt](https://www.gartner.com/en/documents/3991199)

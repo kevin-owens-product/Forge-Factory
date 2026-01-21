@@ -1,0 +1,414 @@
+{
+  "$schema": "https://claude.ai/schemas/workflow.json",
+  "version": "1.0.0",
+  "name": "Forge Factory Build Workflow",
+  "description": "Orchestrates the complete autonomous build of the Forge Factory platform",
+  "phases": [
+    {
+      "id": "phase-1-foundation",
+      "name": "Foundation & Core Packages",
+      "description": "Establish infrastructure layer",
+      "order": 1,
+      "dependencies": [],
+      "tasks": [
+        {
+          "id": "task-1-1",
+          "name": "Create @forge/database package",
+          "skill": "/build-package database --from-adr ADR-009",
+          "adrRef": "ADR-009",
+          "status": "pending",
+          "outputs": ["packages/database/"]
+        },
+        {
+          "id": "task-1-2",
+          "name": "Create @forge/cache package",
+          "skill": "/build-package cache",
+          "status": "pending",
+          "outputs": ["packages/cache/"]
+        },
+        {
+          "id": "task-1-3",
+          "name": "Create @forge/queue package",
+          "skill": "/build-package queue",
+          "status": "pending",
+          "outputs": ["packages/queue/"]
+        },
+        {
+          "id": "task-1-4",
+          "name": "Create @forge/storage package",
+          "skill": "/build-package storage",
+          "status": "pending",
+          "outputs": ["packages/storage/"]
+        },
+        {
+          "id": "task-1-5",
+          "name": "Run integration tests",
+          "command": "pnpm test:integration",
+          "status": "pending",
+          "dependsOn": ["task-1-1", "task-1-2", "task-1-3", "task-1-4"]
+        }
+      ],
+      "validation": {
+        "command": "pnpm tsc --noEmit && pnpm test",
+        "coverageThreshold": 80
+      }
+    },
+    {
+      "id": "phase-2-security",
+      "name": "Security & Auth",
+      "description": "Establish security infrastructure",
+      "order": 2,
+      "dependencies": ["phase-1-foundation"],
+      "tasks": [
+        {
+          "id": "task-2-1",
+          "name": "Create @forge/auth package",
+          "skill": "/build-package auth --from-adr ADR-026",
+          "adrRef": "ADR-026",
+          "status": "pending",
+          "outputs": ["packages/auth/"]
+        },
+        {
+          "id": "task-2-2",
+          "name": "Create @forge/sso package",
+          "skill": "/build-package sso --from-adr ADR-026",
+          "adrRef": "ADR-026",
+          "status": "pending",
+          "outputs": ["packages/sso/"]
+        },
+        {
+          "id": "task-2-3",
+          "name": "Create @forge/roles package",
+          "skill": "/build-package roles --from-adr ADR-002",
+          "adrRef": "ADR-002",
+          "status": "pending",
+          "outputs": ["packages/roles/"]
+        },
+        {
+          "id": "task-2-4",
+          "name": "Create @forge/compliance package",
+          "skill": "/build-package compliance --from-adr ADR-021",
+          "adrRef": "ADR-021",
+          "status": "pending",
+          "outputs": ["packages/compliance/"]
+        },
+        {
+          "id": "task-2-5",
+          "name": "Create @forge/encryption package",
+          "skill": "/build-package encryption",
+          "status": "pending",
+          "outputs": ["packages/encryption/"],
+          "requiresHumanReview": true,
+          "reviewReason": "Security-critical code"
+        },
+        {
+          "id": "task-2-6",
+          "name": "Security audit",
+          "command": "pnpm security:scan",
+          "status": "pending",
+          "dependsOn": ["task-2-1", "task-2-2", "task-2-3", "task-2-4", "task-2-5"]
+        }
+      ],
+      "validation": {
+        "command": "pnpm test && pnpm security:scan",
+        "coverageThreshold": 85
+      }
+    },
+    {
+      "id": "phase-3-ui-foundation",
+      "name": "UI Foundation",
+      "description": "Design system and UI infrastructure",
+      "order": 3,
+      "dependencies": ["phase-1-foundation"],
+      "tasks": [
+        {
+          "id": "task-3-1",
+          "name": "Create @forge/design-system package",
+          "skill": "/build-feature ADR-010",
+          "adrRef": "ADR-010",
+          "status": "pending",
+          "outputs": ["packages/design-system/"]
+        },
+        {
+          "id": "task-3-2",
+          "name": "Create @forge/i18n package",
+          "skill": "/build-package i18n --from-adr ADR-016",
+          "adrRef": "ADR-016",
+          "status": "pending",
+          "outputs": ["packages/i18n/"]
+        },
+        {
+          "id": "task-3-3",
+          "name": "Create @forge/feature-flags package",
+          "skill": "/build-package feature-flags --from-adr ADR-022",
+          "adrRef": "ADR-022",
+          "status": "pending",
+          "outputs": ["packages/feature-flags/"]
+        },
+        {
+          "id": "task-3-4",
+          "name": "Create @forge/analytics package",
+          "skill": "/build-package analytics",
+          "status": "pending",
+          "outputs": ["packages/analytics/"]
+        },
+        {
+          "id": "task-3-5",
+          "name": "Create @forge/realtime package",
+          "skill": "/build-package realtime --from-adr ADR-015",
+          "adrRef": "ADR-015",
+          "status": "pending",
+          "outputs": ["packages/realtime/"]
+        }
+      ],
+      "validation": {
+        "command": "pnpm test && pnpm test:a11y",
+        "coverageThreshold": 80
+      }
+    },
+    {
+      "id": "phase-4-applications",
+      "name": "Applications",
+      "description": "Build user-facing applications",
+      "order": 4,
+      "dependencies": ["phase-2-security", "phase-3-ui-foundation"],
+      "tasks": [
+        {
+          "id": "task-4-1",
+          "name": "Enhance API application",
+          "skill": "/build-feature API-enhancement",
+          "status": "pending",
+          "outputs": ["apps/api/"]
+        },
+        {
+          "id": "task-4-2",
+          "name": "Create User Portal",
+          "skill": "/build-feature ADR-012",
+          "adrRef": "ADR-012",
+          "status": "pending",
+          "outputs": ["apps/portal/"]
+        },
+        {
+          "id": "task-4-3",
+          "name": "Create Admin Portal",
+          "skill": "/build-feature ADR-014",
+          "adrRef": "ADR-014",
+          "status": "pending",
+          "outputs": ["apps/admin/"]
+        },
+        {
+          "id": "task-4-4",
+          "name": "Create Developer Portal",
+          "skill": "/build-feature ADR-013",
+          "adrRef": "ADR-013",
+          "status": "pending",
+          "outputs": ["apps/developer/"]
+        },
+        {
+          "id": "task-4-5",
+          "name": "Create Super Admin Portal",
+          "skill": "/build-feature ADR-020",
+          "adrRef": "ADR-020",
+          "status": "pending",
+          "outputs": ["apps/super-admin/"]
+        }
+      ],
+      "validation": {
+        "command": "pnpm build && pnpm test && pnpm test:e2e",
+        "coverageThreshold": 80
+      }
+    },
+    {
+      "id": "phase-5-features",
+      "name": "Feature Vertical Slices",
+      "description": "Build all feature vertical slices from ADRs",
+      "order": 5,
+      "dependencies": ["phase-4-applications"],
+      "tasks": [
+        {
+          "id": "task-5-1",
+          "name": "Build AI-First Interaction",
+          "skill": "/build-feature ADR-019",
+          "adrRef": "ADR-019",
+          "status": "pending"
+        },
+        {
+          "id": "task-5-2",
+          "name": "Build Real-time Collaboration",
+          "skill": "/build-feature ADR-020",
+          "adrRef": "ADR-020",
+          "status": "pending"
+        },
+        {
+          "id": "task-5-3",
+          "name": "Build Version History",
+          "skill": "/build-feature ADR-023",
+          "adrRef": "ADR-023",
+          "status": "pending"
+        },
+        {
+          "id": "task-5-4",
+          "name": "Build Change Management",
+          "skill": "/build-feature ADR-024",
+          "adrRef": "ADR-024",
+          "status": "pending"
+        },
+        {
+          "id": "task-5-5",
+          "name": "Build ROI Tracking",
+          "skill": "/build-feature ADR-025",
+          "adrRef": "ADR-025",
+          "status": "pending"
+        },
+        {
+          "id": "task-5-6",
+          "name": "Build Enterprise Onboarding",
+          "skill": "/build-feature ADR-026",
+          "adrRef": "ADR-026",
+          "status": "pending"
+        },
+        {
+          "id": "task-5-7",
+          "name": "Build Health Monitoring",
+          "skill": "/build-feature ADR-027",
+          "adrRef": "ADR-027",
+          "status": "pending"
+        },
+        {
+          "id": "task-5-8",
+          "name": "Build Support Tickets",
+          "skill": "/build-feature ADR-029",
+          "adrRef": "ADR-029",
+          "status": "pending"
+        }
+      ],
+      "validation": {
+        "command": "pnpm test && pnpm test:e2e",
+        "coverageThreshold": 80
+      }
+    },
+    {
+      "id": "phase-6-ai-analysis",
+      "name": "AI & Code Analysis",
+      "description": "Build code analysis and AI capabilities",
+      "order": 6,
+      "dependencies": ["phase-4-applications"],
+      "tasks": [
+        {
+          "id": "task-6-1",
+          "name": "Build Multi-Language Code Analysis",
+          "skill": "/build-feature ADR-038",
+          "adrRef": "ADR-038",
+          "status": "pending"
+        },
+        {
+          "id": "task-6-2",
+          "name": "Build AI-Readiness Assessment",
+          "skill": "/build-feature ADR-039",
+          "adrRef": "ADR-039",
+          "status": "pending"
+        },
+        {
+          "id": "task-6-3",
+          "name": "Build Transformation Safety",
+          "skill": "/build-feature ADR-040",
+          "adrRef": "ADR-040",
+          "status": "pending",
+          "requiresHumanReview": true,
+          "reviewReason": "Critical safety system"
+        },
+        {
+          "id": "task-6-4",
+          "name": "Build LLM Provider Router",
+          "skill": "/build-feature ADR-041",
+          "adrRef": "ADR-041",
+          "status": "pending"
+        },
+        {
+          "id": "task-6-5",
+          "name": "Build Refactoring Engine",
+          "skill": "/build-feature ADR-047",
+          "adrRef": "ADR-047",
+          "status": "pending"
+        },
+        {
+          "id": "task-6-6",
+          "name": "Build Source Control Integration",
+          "skill": "/build-feature ADR-052",
+          "adrRef": "ADR-052",
+          "status": "pending"
+        },
+        {
+          "id": "task-6-7",
+          "name": "Build PR Automation",
+          "skill": "/build-feature ADR-053",
+          "adrRef": "ADR-053",
+          "status": "pending"
+        }
+      ],
+      "validation": {
+        "command": "pnpm test && pnpm test:e2e",
+        "coverageThreshold": 80
+      }
+    },
+    {
+      "id": "phase-7-final",
+      "name": "Final Integration & Validation",
+      "description": "Complete integration testing and validation",
+      "order": 7,
+      "dependencies": ["phase-5-features", "phase-6-ai-analysis"],
+      "tasks": [
+        {
+          "id": "task-7-1",
+          "name": "Run full E2E test suite",
+          "command": "pnpm test:e2e",
+          "status": "pending"
+        },
+        {
+          "id": "task-7-2",
+          "name": "Run accessibility audit",
+          "command": "pnpm test:a11y",
+          "status": "pending"
+        },
+        {
+          "id": "task-7-3",
+          "name": "Run security scan",
+          "command": "pnpm security:scan",
+          "status": "pending"
+        },
+        {
+          "id": "task-7-4",
+          "name": "Run performance audit",
+          "command": "pnpm test:performance",
+          "status": "pending"
+        },
+        {
+          "id": "task-7-5",
+          "name": "Generate final metrics",
+          "command": "pnpm metrics:generate",
+          "status": "pending"
+        }
+      ],
+      "validation": {
+        "command": "pnpm validate:all",
+        "coverageThreshold": 80
+      }
+    }
+  ],
+  "globalValidation": {
+    "qualityGates": [
+      "TypeScript compilation",
+      "ESLint validation",
+      "Test coverage >= 80%",
+      "No circular dependencies",
+      "Security scan pass",
+      "Accessibility audit pass"
+    ],
+    "requiredHumanReview": [
+      "Security-critical code",
+      "Payment processing",
+      "Authentication logic",
+      "Data migrations"
+    ]
+  }
+}

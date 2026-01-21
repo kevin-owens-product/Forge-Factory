@@ -1,0 +1,88 @@
+{
+  "$schema": "https://claude.ai/schemas/ai-metrics.json",
+  "version": "1.0.0",
+  "projectName": "Forge Factory",
+  "lastUpdated": "2026-01-21T00:00:00Z",
+  "summary": {
+    "totalLines": 0,
+    "aiGeneratedLines": 0,
+    "humanWrittenLines": 0,
+    "ratio": 0,
+    "targetRatio": 0.75
+  },
+  "byCategory": {
+    "features": {
+      "totalLines": 0,
+      "aiGeneratedLines": 0,
+      "ratio": 0
+    },
+    "tests": {
+      "totalLines": 0,
+      "aiGeneratedLines": 0,
+      "ratio": 0
+    },
+    "infrastructure": {
+      "totalLines": 0,
+      "aiGeneratedLines": 0,
+      "ratio": 0
+    },
+    "security": {
+      "totalLines": 0,
+      "aiGeneratedLines": 0,
+      "ratio": 0,
+      "note": "Security code requires human review per CLAUDE.md"
+    },
+    "documentation": {
+      "totalLines": 0,
+      "aiGeneratedLines": 0,
+      "ratio": 0
+    }
+  },
+  "byPackage": {},
+  "byApp": {},
+  "promptUsage": {
+    "forge-v4.1:feature:create-feature": {
+      "count": 0,
+      "linesGenerated": 0,
+      "filesGenerated": 0,
+      "avgCoverage": 0
+    },
+    "forge-v4.1:feature:add-api-endpoint": {
+      "count": 0,
+      "linesGenerated": 0,
+      "filesGenerated": 0,
+      "avgCoverage": 0
+    },
+    "forge-v4.1:generator:vertical-slice": {
+      "count": 0,
+      "linesGenerated": 0,
+      "filesGenerated": 0,
+      "avgCoverage": 0
+    },
+    "forge-v4.1:generator:migration": {
+      "count": 0,
+      "linesGenerated": 0,
+      "filesGenerated": 0,
+      "avgCoverage": 0
+    },
+    "forge-v4.1:utility:refactor-pattern": {
+      "count": 0,
+      "linesGenerated": 0,
+      "filesGenerated": 0,
+      "avgCoverage": 0
+    }
+  },
+  "qualityMetrics": {
+    "averageCoverage": 0,
+    "lintPassRate": 0,
+    "typeCheckPassRate": 0,
+    "securityScanPassRate": 0,
+    "a11yPassRate": 0
+  },
+  "sessions": [],
+  "trends": {
+    "daily": [],
+    "weekly": [],
+    "monthly": []
+  }
+}
