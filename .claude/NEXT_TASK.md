@@ -7,58 +7,51 @@
 
 ## Current Task
 
-**Build `@forge/sso` package**
+**Build `@forge/roles` package**
 
 ### Instructions
 
-Create the SSO (Single Sign-On) package with SAML and OIDC integration.
+Create the RBAC (Role-Based Access Control) package.
 
 **Files to Create:**
 ```
-packages/sso/
+packages/roles/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── sso.service.ts        # Main SSO service
-│   ├── sso.types.ts          # TypeScript interfaces
-│   ├── saml/
-│   │   ├── index.ts          # SAML exports
-│   │   ├── saml.provider.ts  # SAML provider implementation
-│   │   ├── saml.parser.ts    # SAML response parser
-│   │   └── saml.metadata.ts  # SAML metadata handling
-│   ├── oidc/
-│   │   ├── index.ts          # OIDC exports
-│   │   ├── oidc.provider.ts  # OIDC provider implementation
-│   │   ├── oidc.discovery.ts # OIDC discovery document
-│   │   └── oidc.tokens.ts    # OIDC token handling
-│   └── providers/
-│       ├── index.ts          # Provider exports
-│       ├── okta.ts           # Okta integration
-│       ├── azure-ad.ts       # Azure AD integration
-│       └── google-workspace.ts # Google Workspace integration
+│   ├── roles.service.ts      # Main RBAC service
+│   ├── roles.types.ts        # TypeScript interfaces
+│   ├── permission.ts         # Permission management
+│   ├── role.ts               # Role management
+│   ├── policy.ts             # Policy evaluation engine
+│   └── external.d.ts         # External dependencies types
 ├── __tests__/
-│   └── sso.service.test.ts
+│   ├── roles.service.test.ts
+│   ├── permission.test.ts
+│   └── policy.test.ts
 ├── package.json
 ├── tsconfig.json
-└── README.md
+├── vitest.config.ts
+└── vitest.setup.ts
 ```
 
 **Requirements:**
-- SAML 2.0 service provider implementation
-- OIDC/OAuth 2.0 relying party implementation
-- Identity provider discovery (SAML metadata, OIDC well-known)
-- Assertion/token validation and parsing
-- User provisioning hooks (JIT provisioning)
-- Attribute mapping for user profiles
-- Session binding to SSO sessions
-- Single logout (SLO) support
-- Pre-built integrations (Okta, Azure AD, Google Workspace)
-- Multi-tenant support
+- Role definition and management (create, update, delete, list)
+- Permission definition (resource, action, conditions)
+- Role-permission assignment
+- User-role assignment with multi-tenancy
+- Policy evaluation engine (allow/deny rules)
+- Hierarchical roles (role inheritance)
+- Attribute-based conditions (time, resource attributes)
+- Permission caching for performance
+- Audit logging for permission changes
+- Integration with @forge/auth package
+- Multi-tenant support with namespace isolation
 - 80%+ test coverage
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(sso): add @forge/sso package"`
+3. Commit: `git add . && git commit -m "feat(roles): add @forge/roles package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -74,8 +67,8 @@ packages/sso/
 
 ### Phase 2: Security
 - [x] @forge/auth (Authentication core) ← COMPLETED
-- [ ] @forge/sso (SAML/OIDC integration) ← CURRENT
-- [ ] @forge/roles (RBAC system)
+- [x] @forge/sso (SAML/OIDC integration) ← COMPLETED
+- [ ] @forge/roles (RBAC system) ← CURRENT
 - [ ] @forge/compliance (Audit logging)
 
 ### Phase 3: UI Foundation
@@ -95,6 +88,57 @@ packages/sso/
 ---
 
 ## Completed
+
+### @forge/sso - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/sso/src/index.ts
+- packages/sso/src/sso.service.ts
+- packages/sso/src/sso.types.ts
+- packages/sso/src/external.d.ts
+- packages/sso/src/saml/index.ts
+- packages/sso/src/saml/saml.provider.ts
+- packages/sso/src/saml/saml.parser.ts
+- packages/sso/src/saml/saml.metadata.ts
+- packages/sso/src/oidc/index.ts
+- packages/sso/src/oidc/oidc.provider.ts
+- packages/sso/src/oidc/oidc.discovery.ts
+- packages/sso/src/oidc/oidc.tokens.ts
+- packages/sso/src/providers/index.ts
+- packages/sso/src/providers/okta.ts
+- packages/sso/src/providers/azure-ad.ts
+- packages/sso/src/providers/google-workspace.ts
+- packages/sso/__tests__/sso.service.test.ts
+- packages/sso/__tests__/saml.parser.test.ts
+- packages/sso/__tests__/saml.provider.test.ts
+- packages/sso/__tests__/saml.metadata.test.ts
+- packages/sso/__tests__/oidc.provider.test.ts
+- packages/sso/__tests__/oidc.discovery.test.ts
+- packages/sso/__tests__/oidc.tokens.test.ts
+- packages/sso/__tests__/providers.test.ts
+- packages/sso/package.json
+- packages/sso/tsconfig.json
+- packages/sso/vitest.config.ts
+- packages/sso/vitest.setup.ts
+
+**Features Implemented:**
+- SAML 2.0 service provider implementation
+- SAML AuthnRequest and LogoutRequest generation
+- SAML response and assertion parsing with validation
+- SAML metadata handling (parsing and SP generation)
+- OIDC/OAuth 2.0 relying party implementation
+- OIDC authorization code flow with PKCE support
+- OIDC discovery document handling (.well-known)
+- ID token validation with claims extraction
+- Token refresh and revocation support
+- Pre-built integrations (Okta, Azure AD, Google Workspace)
+- User provisioning hooks (JIT provisioning)
+- Attribute mapping for user profiles
+- Session binding to SSO sessions
+- Single logout (SLO) support
+- Multi-tenant support with event handlers
+- Audit logging hooks for security events
+- 206 tests, 90%+ coverage
 
 ### @forge/auth - COMPLETED 2026-01-21
 
