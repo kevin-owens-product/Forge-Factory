@@ -1,0 +1,16 @@
+/**
+ * @package @forge/roles
+ * @description Vitest setup file
+ */
+
+import { vi } from 'vitest';
+
+// Reset all mocks before each test
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+// Clean up after all tests
+afterAll(() => {
+  vi.restoreAllMocks();
+});
