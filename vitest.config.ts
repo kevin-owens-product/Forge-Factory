@@ -31,6 +31,7 @@ export default defineConfig({
       '@forge/shared-types': path.resolve(__dirname, './packages/shared-types/src'),
       '@forge/errors': path.resolve(__dirname, './packages/errors/src'),
       '@forge/prisma': path.resolve(__dirname, './packages/prisma/src'),
+      '@forge/database': path.resolve(__dirname, './packages/database/src'),
     },
   },
 });

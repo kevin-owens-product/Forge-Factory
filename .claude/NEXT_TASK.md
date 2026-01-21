@@ -7,42 +7,42 @@
 
 ## Current Task
 
-**Build `@forge/database` package**
+**Build `@forge/cache` package**
 
 ### Instructions
 
-Create the database connection management package following ADR-009.
+Create the Redis caching wrapper package for Forge Factory.
 
 **Files to Create:**
 ```
-packages/database/
+packages/cache/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── database.service.ts   # Main service class
-│   ├── database.types.ts     # TypeScript interfaces
-│   ├── connection-pool.ts    # PgBouncer pool management
-│   └── health.ts             # Health check utilities
+│   ├── cache.service.ts      # Main cache service class
+│   ├── cache.types.ts        # TypeScript interfaces
+│   ├── redis-client.ts       # Redis connection management
+│   └── serialization.ts      # Serialization utilities
 ├── __tests__/
-│   └── database.service.test.ts
+│   └── cache.service.test.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
 **Requirements:**
-- Connection pooling with configurable pool size
-- Tenant-aware connection handling
+- Redis connection management with configurable options
+- Get/Set/Delete operations with TTL support
+- JSON serialization/deserialization
+- Namespace support for tenant isolation
 - Health check method
+- Connection pooling support
 - Graceful shutdown support
-- Use existing @forge/prisma for Prisma client
 - 80%+ test coverage
-
-**Reference ADR:** `tools/adrs/009-connection-pooling.md`
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(database): add @forge/database package"`
+3. Commit: `git add . && git commit -m "feat(cache): add @forge/cache package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -51,8 +51,8 @@ packages/database/
 ## Task Queue
 
 ### Phase 1: Foundation
-- [ ] @forge/database ← CURRENT
-- [ ] @forge/cache (Redis wrapper)
+- [x] @forge/database ← COMPLETED
+- [ ] @forge/cache (Redis wrapper) ← CURRENT
 - [ ] @forge/queue (BullMQ wrapper)
 - [ ] @forge/storage (S3/R2 wrapper)
 
@@ -80,7 +80,26 @@ packages/database/
 
 ## Completed
 
-_(Tasks move here when done)_
+### @forge/database - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/database/src/index.ts
+- packages/database/src/database.service.ts
+- packages/database/src/database.types.ts
+- packages/database/src/connection-pool.ts
+- packages/database/src/health.ts
+- packages/database/src/external.d.ts
+- packages/database/__tests__/database.service.test.ts
+- packages/database/package.json
+- packages/database/tsconfig.json
+- packages/database/README.md
+
+**Features Implemented:**
+- Connection pooling with configurable pool size
+- Tenant-aware connection handling via TenantClient
+- Health check utilities with pool statistics
+- Graceful shutdown support
+- Query metrics tracking
 
 ---
 
