@@ -88,40 +88,13 @@ run_session() {
         return 0
     fi
 
-    # The prompt for Claude
-    local prompt="You are in an autonomous build session for Forge Factory.
+    # The prompt for Claude (kept short to avoid arg length limits)
+    local prompt="Autonomous build session. Read .claude/NEXT_TASK.md and complete the current task: build the package, add tests (80%+ coverage), run quality checks, commit, push. Then update NEXT_TASK.md with the next task from the queue. Stay focused on ONE task only."
 
-READ .claude/NEXT_TASK.md to see your current task.
+    # Run Claude with the prompt as argument (not piped)
+    claude -p "$prompt" --dangerously-skip-permissions 2>&1 | tee "$log_file"
 
-EXECUTE the task completely:
-1. Read the task instructions
-2. Build the package/feature as specified
-3. Ensure all files are created with proper structure
-4. Add tests achieving 80%+ coverage
-5. Run quality checks (pnpm tsc --noEmit, pnpm lint)
-6. Commit your changes with a descriptive message
-7. Push to the current branch
-
-AFTER COMPLETING THE TASK:
-1. Update .claude/NEXT_TASK.md:
-   - Move current task to completed
-   - Set the NEXT task from the queue as current
-   - If no more tasks, write 'BUILD COMPLETE' at the top
-2. Update .claude/build-state.json with progress
-
-IMPORTANT:
-- Stay focused on the ONE task in NEXT_TASK.md
-- Do not start additional tasks
-- Commit and push before finishing
-- Update NEXT_TASK.md for the next session
-
-Begin by reading .claude/NEXT_TASK.md"
-
-    # Run Claude with the prompt
-    # Using --print for non-interactive mode, --dangerously-skip-permissions for automation
-    echo "$prompt" | claude --print --dangerously-skip-permissions 2>&1 | tee "$log_file"
-
-    local exit_code=${PIPESTATUS[1]}
+    local exit_code=${PIPESTATUS[0]}
 
     if [ $exit_code -ne 0 ]; then
         echo ""
