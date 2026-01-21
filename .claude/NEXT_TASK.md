@@ -7,43 +7,45 @@
 
 ## Current Task
 
-**Build `@forge/queue` package**
+**Build `@forge/storage` package**
 
 ### Instructions
 
-Create the BullMQ job queue wrapper package for Forge Factory.
+Create the S3/R2 object storage wrapper package for Forge Factory.
 
 **Files to Create:**
 ```
-packages/queue/
+packages/storage/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── queue.service.ts      # Main queue service class
-│   ├── queue.types.ts        # TypeScript interfaces
-│   ├── worker.ts             # Worker management
-│   ├── job.ts                # Job utilities and helpers
-│   └── scheduler.ts          # Scheduled/recurring jobs
+│   ├── storage.service.ts    # Main storage service class
+│   ├── storage.types.ts      # TypeScript interfaces
+│   ├── s3-client.ts          # S3/R2 client wrapper
+│   ├── file-utils.ts         # File utilities and helpers
+│   └── presigned.ts          # Presigned URL generation
 ├── __tests__/
-│   └── queue.service.test.ts
+│   └── storage.service.test.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
 **Requirements:**
-- BullMQ queue abstraction with configurable options
-- Job creation with priority, delay, and retry support
-- Worker management with concurrency control
-- Event listeners for job lifecycle (completed, failed, progress)
-- Scheduled/recurring jobs support
-- Job cleanup and retention policies
-- Graceful shutdown for workers
+- S3-compatible storage abstraction (works with AWS S3 and Cloudflare R2)
+- Upload, download, delete operations
+- Multipart upload support for large files
+- Presigned URL generation for direct uploads/downloads
+- File metadata retrieval
+- Bucket operations (list, create, check existence)
+- MIME type detection
+- Stream support for large files
+- Multi-tenant support with prefix isolation
 - 80%+ test coverage
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(queue): add @forge/queue package"`
+3. Commit: `git add . && git commit -m "feat(storage): add @forge/storage package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -54,8 +56,8 @@ packages/queue/
 ### Phase 1: Foundation
 - [x] @forge/database ← COMPLETED
 - [x] @forge/cache (Redis wrapper) ← COMPLETED
-- [ ] @forge/queue (BullMQ wrapper) ← CURRENT
-- [ ] @forge/storage (S3/R2 wrapper)
+- [x] @forge/queue (BullMQ wrapper) ← COMPLETED
+- [ ] @forge/storage (S3/R2 wrapper) ← CURRENT
 
 ### Phase 2: Security
 - [ ] @forge/auth (Authentication core)
@@ -80,6 +82,35 @@ packages/queue/
 ---
 
 ## Completed
+
+### @forge/queue - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/queue/src/index.ts
+- packages/queue/src/queue.service.ts
+- packages/queue/src/queue.types.ts
+- packages/queue/src/worker.ts
+- packages/queue/src/job.ts
+- packages/queue/src/scheduler.ts
+- packages/queue/src/external.d.ts
+- packages/queue/__tests__/queue.service.test.ts
+- packages/queue/package.json
+- packages/queue/tsconfig.json
+- packages/queue/vitest.setup.ts
+- packages/queue/README.md
+
+**Features Implemented:**
+- BullMQ queue abstraction with configurable options
+- Job creation with priority, delay, and retry support
+- Worker management with concurrency control
+- Worker pools for scaling
+- Event listeners for job lifecycle (completed, failed, progress)
+- Scheduled/recurring jobs support with cron patterns
+- Job cleanup and retention policies
+- Graceful shutdown for workers
+- Multi-tenant support with namespace isolation
+- Health checks with queue statistics
+- 153 tests, 87.75% coverage
 
 ### @forge/cache - COMPLETED 2026-01-21
 
