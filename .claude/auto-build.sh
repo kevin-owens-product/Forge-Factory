@@ -54,9 +54,9 @@ is_build_complete() {
         fi
     fi
 
-    # Also check NEXT_TASK.md for completion marker
+    # Check NEXT_TASK.md Status line for BUILD COMPLETE
     if [ -f ".claude/NEXT_TASK.md" ]; then
-        if grep -q "BUILD COMPLETE" .claude/NEXT_TASK.md; then
+        if grep -q '^\*\*Status:\*\* BUILD COMPLETE' .claude/NEXT_TASK.md; then
             return 0
         fi
     fi
