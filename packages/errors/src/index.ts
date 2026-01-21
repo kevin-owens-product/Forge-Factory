@@ -52,6 +52,7 @@ export enum ErrorCode {
   DATABASE_ERROR = 'INT_9002',
   CACHE_ERROR = 'INT_9003',
   QUEUE_ERROR = 'INT_9004',
+  STORAGE_ERROR = 'INT_9005',
 }
 
 // ============================================

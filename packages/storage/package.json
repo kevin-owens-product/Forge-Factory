@@ -1,0 +1,44 @@
+{
+  "name": "@forge/storage",
+  "version": "1.0.0",
+  "description": "S3/R2 object storage wrapper for Forge Factory",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@forge/errors": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "typescript": "^5.6.0",
+    "vitest": "^1.6.0"
+  },
+  "peerDependencies": {
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/s3-request-presigner": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@aws-sdk/client-s3": {
+      "optional": true
+    },
+    "@aws-sdk/s3-request-presigner": {
+      "optional": true
+    }
+  },
+  "keywords": [
+    "forge",
+    "storage",
+    "s3",
+    "r2",
+    "object-storage"
+  ],
+  "author": "",
+  "license": "ISC"
+}

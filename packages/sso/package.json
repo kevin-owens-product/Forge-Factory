@@ -1,0 +1,41 @@
+{
+  "name": "@forge/sso",
+  "version": "1.0.0",
+  "description": "SSO (SAML/OIDC) integration for Forge applications",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@forge/auth": "workspace:*",
+    "@forge/errors": "workspace:*"
+  },
+  "peerDependencies": {
+    "xml2js": "^0.6.0",
+    "xmlbuilder2": "^3.0.0",
+    "node-forge": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/xml2js": "^0.4.14",
+    "@vitest/coverage-v8": "^1.6.0",
+    "typescript": "^5.7.0",
+    "vitest": "^1.6.0"
+  },
+  "keywords": [
+    "sso",
+    "saml",
+    "oidc",
+    "oauth",
+    "authentication",
+    "identity"
+  ],
+  "author": "Forge Factory",
+  "license": "MIT"
+}
