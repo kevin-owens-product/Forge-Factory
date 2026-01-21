@@ -1,0 +1,16 @@
+{
+  "name": "forge-autonomous-builder",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "npx tsc autonomous-builder.ts --outDir dist --esModuleInterop --module nodenext --moduleResolution nodenext --target ES2022",
+    "start": "npx tsx autonomous-builder.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.52.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.0"
+  }
+}
