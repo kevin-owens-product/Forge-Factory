@@ -1148,6 +1148,78 @@ export async function cleanupRetiredProjects() {
 - Resource quota exceeded
 - Failed archival/retirement
 
+## Multi-Organization Transformation Support
+
+For large-scale enterprise transformations spanning multiple organizations (e.g., M&A integrations, global rollouts), this lifecycle management system supports:
+
+### Cross-Organization Project Groups
+
+```typescript
+interface TransformationProjectGroup {
+  id: string;
+  name: string;
+  transformationType: TransformationPlaybookType;
+
+  // Multiple organizations participating
+  participatingOrganizations: OrganizationParticipation[];
+
+  // Group-level governance
+  governance: GroupGovernance;
+
+  // Coordinated lifecycle
+  coordinatedTransitions: CoordinatedTransition[];
+
+  // Shared resources
+  sharedResources: SharedResource[];
+}
+
+enum TransformationPlaybookType {
+  DIGITAL_TRANSFORMATION = 'digital-transformation',      // ADR-031
+  LEGACY_MODERNIZATION = 'legacy-modernization',          // ADR-032
+  CLOUD_MIGRATION = 'cloud-migration',                    // ADR-033
+  DEVOPS_TRANSFORMATION = 'devops-transformation',        // ADR-034
+  MICROSERVICES_DDD = 'microservices-ddd',               // ADR-035
+  SECURITY_COMPLIANCE = 'security-compliance',            // ADR-036
+  MA_CONSOLIDATION = 'ma-consolidation'                   // ADR-037
+}
+
+interface OrganizationParticipation {
+  organizationId: string;
+  role: 'lead' | 'participant' | 'observer';
+  projects: ProjectReference[];
+  syncStrategy: SyncStrategy;
+}
+```
+
+### Coordinated Lifecycle Transitions
+
+```typescript
+interface CoordinatedTransition {
+  groupId: string;
+  targetStatus: ProjectStatus;
+
+  // All projects must transition together
+  synchronous: boolean;
+
+  // Order of transitions
+  transitionOrder: TransitionOrder[];
+
+  // Rollback strategy
+  rollbackOnFailure: 'all' | 'failed-only' | 'none';
+}
+```
+
+## Related ADRs
+
+- ADR-025: ROI Tracking for Code Transformations
+- ADR-031: Digital Transformation Playbook
+- ADR-032: Legacy System Modernization Playbook
+- ADR-033: Cloud Migration & Hybrid Cloud Playbook
+- ADR-034: DevOps & Platform Engineering Transformation Playbook
+- ADR-035: Microservices & DDD Transformation Playbook
+- ADR-036: Security & Compliance Transformation Playbook
+- ADR-037: M&A Code Consolidation Playbook
+
 ## References
 
 - [AWS Account Lifecycle Management](https://aws.amazon.com/organizations/)
