@@ -94,11 +94,35 @@ run_session() {
     # Run Claude with the prompt as argument
     # Using --permission-mode bypassPermissions for automation
     # Note: Avoid piping to tee as it causes hanging issues
-    claude -p "$prompt" --permission-mode bypassPermissions 2>&1 > "$log_file"
+
+    # Start claude in background
+    claude -p "$prompt" --permission-mode bypassPermissions 2>&1 > "$log_file" &
+    local claude_pid=$!
+
+    # Spinner animation while waiting
+    local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    local i=0
+    echo -n "  🔨 Claude is building... "
+    while kill -0 $claude_pid 2>/dev/null; do
+        i=$(( (i+1) % ${#spin} ))
+        printf "\r  🔨 Claude is building... ${spin:$i:1} "
+        sleep 0.1
+    done
+
+    # Get exit code
+    wait $claude_pid
     local exit_code=$?
 
-    # Display the log after completion
-    cat "$log_file"
+    # Clear spinner line and show completion
+    printf "\r  ✅ Claude finished!          \n"
+
+    # Show summary from log (last 20 lines)
+    echo ""
+    echo "  📋 Session Summary:"
+    echo "  ─────────────────────────────────────"
+    tail -20 "$log_file" | sed 's/^/  /'
+    echo "  ─────────────────────────────────────"
+    echo "  📁 Full log: $log_file"
 
     if [ $exit_code -ne 0 ]; then
         echo ""
