@@ -37,7 +37,9 @@ function getCurrentTask(): string {
 
 function isBuildComplete(): boolean {
   const content = fs.readFileSync(NEXT_TASK_FILE, "utf-8");
-  return content.includes("**Status:** BUILD COMPLETE");
+  // Check only the first 10 lines for status to avoid matching instructions
+  const firstLines = content.split("\n").slice(0, 10).join("\n");
+  return firstLines.includes("**Status:** BUILD COMPLETE");
 }
 
 async function runSession(sessionNum: number): Promise<SessionResult> {
