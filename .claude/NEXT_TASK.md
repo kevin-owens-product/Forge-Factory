@@ -7,53 +7,58 @@
 
 ## Current Task
 
-**Build `@forge/auth` package**
+**Build `@forge/sso` package**
 
 ### Instructions
 
-Create the authentication core package for Forge Factory.
+Create the SSO (Single Sign-On) package with SAML and OIDC integration.
 
 **Files to Create:**
 ```
-packages/auth/
+packages/sso/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── auth.service.ts       # Main authentication service
-│   ├── auth.types.ts         # TypeScript interfaces
-│   ├── session.ts            # Session management
-│   ├── token.ts              # JWT token handling
-│   ├── password.ts           # Password hashing and validation
-│   ├── mfa.ts                # Multi-factor authentication
+│   ├── sso.service.ts        # Main SSO service
+│   ├── sso.types.ts          # TypeScript interfaces
+│   ├── saml/
+│   │   ├── index.ts          # SAML exports
+│   │   ├── saml.provider.ts  # SAML provider implementation
+│   │   ├── saml.parser.ts    # SAML response parser
+│   │   └── saml.metadata.ts  # SAML metadata handling
+│   ├── oidc/
+│   │   ├── index.ts          # OIDC exports
+│   │   ├── oidc.provider.ts  # OIDC provider implementation
+│   │   ├── oidc.discovery.ts # OIDC discovery document
+│   │   └── oidc.tokens.ts    # OIDC token handling
 │   └── providers/
 │       ├── index.ts          # Provider exports
-│       ├── local.ts          # Local username/password auth
-│       └── oauth.ts          # OAuth provider base
+│       ├── okta.ts           # Okta integration
+│       ├── azure-ad.ts       # Azure AD integration
+│       └── google-workspace.ts # Google Workspace integration
 ├── __tests__/
-│   └── auth.service.test.ts
+│   └── sso.service.test.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
 **Requirements:**
-- User authentication with email/password
-- JWT access and refresh token generation
-- Session management with configurable expiry
-- Password hashing with bcrypt/argon2
-- Password validation (strength requirements)
-- Multi-factor authentication (TOTP)
-- OAuth provider framework
-- Token refresh mechanism
-- Session invalidation
+- SAML 2.0 service provider implementation
+- OIDC/OAuth 2.0 relying party implementation
+- Identity provider discovery (SAML metadata, OIDC well-known)
+- Assertion/token validation and parsing
+- User provisioning hooks (JIT provisioning)
+- Attribute mapping for user profiles
+- Session binding to SSO sessions
+- Single logout (SLO) support
+- Pre-built integrations (Okta, Azure AD, Google Workspace)
 - Multi-tenant support
-- Rate limiting hooks
-- Audit logging hooks
 - 80%+ test coverage
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(auth): add @forge/auth package"`
+3. Commit: `git add . && git commit -m "feat(sso): add @forge/sso package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -68,8 +73,8 @@ packages/auth/
 - [x] @forge/storage (S3/R2 wrapper) ← COMPLETED
 
 ### Phase 2: Security
-- [ ] @forge/auth (Authentication core) ← CURRENT
-- [ ] @forge/sso (SAML/OIDC integration)
+- [x] @forge/auth (Authentication core) ← COMPLETED
+- [ ] @forge/sso (SAML/OIDC integration) ← CURRENT
 - [ ] @forge/roles (RBAC system)
 - [ ] @forge/compliance (Audit logging)
 
@@ -90,6 +95,41 @@ packages/auth/
 ---
 
 ## Completed
+
+### @forge/auth - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/auth/src/index.ts
+- packages/auth/src/auth.service.ts
+- packages/auth/src/auth.types.ts
+- packages/auth/src/token.ts
+- packages/auth/src/password.ts
+- packages/auth/src/session.ts
+- packages/auth/src/mfa.ts
+- packages/auth/src/external.d.ts
+- packages/auth/src/providers/index.ts
+- packages/auth/src/providers/base.ts
+- packages/auth/src/providers/local.ts
+- packages/auth/src/providers/oauth.ts
+- packages/auth/__tests__/auth.test.ts
+- packages/auth/package.json
+- packages/auth/tsconfig.json
+- packages/auth/vitest.config.ts
+- packages/auth/vitest.setup.ts
+
+**Features Implemented:**
+- JWT access and refresh token generation with configurable expiry
+- Password hashing with bcrypt and strength validation
+- Session management with sliding sessions and max concurrent sessions
+- Multi-factor authentication (TOTP) with backup codes
+- Local authentication provider (email/password)
+- OAuth provider framework with Google, GitHub, Microsoft presets
+- Token refresh mechanism with session validation
+- Session invalidation and logout all sessions
+- Multi-tenant support with namespace isolation
+- Rate limiting hooks for failed login attempts
+- Audit logging hooks for security events
+- 191 tests, 93.58% coverage
 
 ### @forge/storage - COMPLETED 2026-01-21
 
