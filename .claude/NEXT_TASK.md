@@ -84,6 +84,14 @@ packages/compliance/
 - [ ] Code Analysis feature (ADR-038)
 - [ ] AI-Readiness Assessment (ADR-039)
 
+### Phase 6: Deployment & Production Testing
+- [ ] Create render.yaml blueprint (define all services)
+- [ ] Deploy to Render staging environment
+- [ ] Run E2E tests against staging
+- [ ] Deploy to Render production
+- [ ] Run production smoke tests
+- [ ] Verify all health endpoints
+
 ---
 
 ## Completed
