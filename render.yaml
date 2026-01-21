@@ -1,0 +1,168 @@
+# Forge Factory - Render Blueprint
+# https://render.com/docs/blueprint-spec
+
+services:
+  # ===========================================
+  # API Service (NestJS)
+  # ===========================================
+  - type: web
+    name: forge-api
+    runtime: node
+    region: oregon
+    plan: standard
+    buildCommand: pnpm install && pnpm build
+    startCommand: node apps/api/dist/main.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: forge-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: forge-redis
+          type: redis
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CORS_ORIGINS
+        value: https://app.forgeplatform.io,https://admin.forgeplatform.io
+    autoDeploy: true
+
+  # ===========================================
+  # User Portal (React)
+  # ===========================================
+  - type: web
+    name: forge-portal
+    runtime: static
+    buildCommand: pnpm install && pnpm --filter @forge/portal build
+    staticPublishPath: apps/portal/dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://api.forgeplatform.io
+      - key: VITE_WS_URL
+        value: wss://api.forgeplatform.io
+
+  # ===========================================
+  # Admin Portal (React)
+  # ===========================================
+  - type: web
+    name: forge-admin
+    runtime: static
+    buildCommand: pnpm install && pnpm --filter @forge/admin build
+    staticPublishPath: apps/admin/dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        value: https://api.forgeplatform.io
+
+  # ===========================================
+  # Background Workers (BullMQ)
+  # ===========================================
+  - type: worker
+    name: forge-workers
+    runtime: node
+    buildCommand: pnpm install && pnpm build
+    startCommand: node apps/api/dist/workers.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: forge-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: forge-redis
+          type: redis
+          property: connectionString
+
+  # ===========================================
+  # Cron Jobs
+  # ===========================================
+  - type: cron
+    name: forge-cleanup
+    runtime: node
+    schedule: "0 2 * * *"  # Daily at 2am
+    buildCommand: pnpm install && pnpm build
+    startCommand: node apps/api/dist/cron/cleanup.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: forge-db
+          property: connectionString
+
+  - type: cron
+    name: forge-metrics
+    runtime: node
+    schedule: "*/15 * * * *"  # Every 15 minutes
+    buildCommand: pnpm install && pnpm build
+    startCommand: node apps/api/dist/cron/metrics.js
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: forge-db
+          property: connectionString
+
+# ===========================================
+# Databases
+# ===========================================
+databases:
+  - name: forge-db
+    plan: standard
+    region: oregon
+    postgresMajorVersion: 16
+    ipAllowList: []  # Only internal access
+
+  - name: forge-redis
+    type: redis
+    plan: standard
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []  # Only internal access
+
+# ===========================================
+# Environment Groups
+# ===========================================
+envVarGroups:
+  - name: forge-shared
+    envVars:
+      - key: LOG_LEVEL
+        value: info
+      - key: SENTRY_DSN
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: AUTH0_DOMAIN
+        sync: false
+      - key: AUTH0_CLIENT_ID
+        sync: false
+      - key: AUTH0_CLIENT_SECRET
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_REGION
+        value: us-west-2
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
