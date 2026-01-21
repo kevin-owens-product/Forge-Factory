@@ -289,6 +289,28 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@22.19.7)(@vitest/ui@1.6.1)(happy-dom@14.12.3)(terser@5.46.0)
 
+  packages/roles:
+    dependencies:
+      '@forge/cache':
+        specifier: workspace:*
+        version: link:../cache
+      '@forge/errors':
+        specifier: workspace:*
+        version: link:../errors
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.19.7
+      '@vitest/coverage-v8':
+        specifier: ^1.6.0
+        version: 1.6.1(vitest@1.6.1(@types/node@22.19.7)(@vitest/ui@1.6.1)(happy-dom@14.12.3)(terser@5.46.0))
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@22.19.7)(@vitest/ui@1.6.1)(happy-dom@14.12.3)(terser@5.46.0)
+
   packages/shared-types:
     dependencies:
       '@prisma/client':

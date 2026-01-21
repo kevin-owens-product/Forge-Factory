@@ -1,0 +1,46 @@
+{
+  "name": "@forge/roles",
+  "version": "1.0.0",
+  "description": "Role-based access control (RBAC) system for Forge Factory",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@forge/errors": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0"
+  },
+  "peerDependencies": {
+    "@forge/cache": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@forge/cache": {
+      "optional": true
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "rbac",
+    "roles",
+    "permissions",
+    "access-control",
+    "authorization",
+    "multi-tenant"
+  ],
+  "author": "Forge Factory",
+  "license": "MIT"
+}
