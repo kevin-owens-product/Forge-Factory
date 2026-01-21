@@ -1,0 +1,118 @@
+{
+  "$schema": "https://claude.ai/schemas/adr-index.json",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-21T00:00:00Z",
+  "totalAdrs": 49,
+  "categories": {
+    "foundation": {
+      "description": "Core architecture and infrastructure decisions",
+      "adrs": [
+        {"id": "ADR-001", "title": "Vertical Slice Architecture", "file": "001-vertical-slice-architecture.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-002", "title": "Tenant Isolation Strategy", "file": "002-tenant-isolation-strategy.md", "priority": "P0", "status": "approved"}
+      ],
+      "dependencies": []
+    },
+    "backend": {
+      "description": "Backend infrastructure and services",
+      "adrs": [
+        {"id": "ADR-009", "title": "Connection Pooling", "file": "009-connection-pooling.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-010", "title": "Frontend Architecture", "file": "010-frontend-architecture.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-011", "title": "State Management Strategy", "file": "011-state-management.md", "priority": "P1", "status": "approved"}
+      ],
+      "dependencies": ["foundation"]
+    },
+    "portals": {
+      "description": "User-facing portal applications",
+      "adrs": [
+        {"id": "ADR-012", "title": "User Portal & Onboarding", "file": "012-user-portal.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-013", "title": "Developer Portal", "file": "013-developer-portal.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-014", "title": "Admin Portal", "file": "014-admin-portal.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-015", "title": "Real-time Updates", "file": "015-realtime.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-016", "title": "Accessibility & i18n", "file": "016-accessibility-i18n.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-017", "title": "Frontend Performance", "file": "017-frontend-performance.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-018", "title": "Error Handling Patterns", "file": "018-error-patterns.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-019", "title": "AI-First Interaction", "file": "019-ai-interaction.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-020", "title": "Real-time Collaboration", "file": "020-collaboration.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-021", "title": "Multi-Compliance Framework", "file": "021-compliance.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-022", "title": "Feature Flagging", "file": "022-feature-flags.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-023", "title": "Version History UI", "file": "023-version-history.md", "priority": "P2", "status": "approved"}
+      ],
+      "dependencies": ["foundation", "backend"]
+    },
+    "enterprise": {
+      "description": "Enterprise customer management and operations",
+      "adrs": [
+        {"id": "ADR-019-enterprise", "title": "Enterprise Customer Management", "file": "019-enterprise-customer-mgmt.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-020-super-admin", "title": "Super Admin Portal", "file": "020-super-admin-portal.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-024", "title": "Change Management", "file": "024-change-management.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-025", "title": "ROI Tracking", "file": "025-roi-tracking.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-026", "title": "Enterprise Onboarding", "file": "026-enterprise-onboarding.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-027", "title": "Customer Health Monitoring", "file": "027-health-monitoring.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-028", "title": "Customer Expansion", "file": "028-expansion.md", "priority": "P2", "status": "approved"},
+        {"id": "ADR-029", "title": "Support Ticket Management", "file": "029-support-tickets.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-030", "title": "Project Governance", "file": "030-project-governance.md", "priority": "P0", "status": "approved"}
+      ],
+      "dependencies": ["foundation", "backend", "portals"]
+    },
+    "transformation-playbooks": {
+      "description": "Enterprise transformation methodology playbooks",
+      "adrs": [
+        {"id": "ADR-031", "title": "Digital Transformation Playbook", "file": "031-digital-transformation.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-032", "title": "Legacy Modernization Playbook", "file": "032-legacy-modernization.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-033", "title": "Cloud Migration Playbook", "file": "033-cloud-migration.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-034", "title": "DevOps Playbook", "file": "034-devops.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-035", "title": "Microservices & DDD Playbook", "file": "035-microservices-ddd.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-036", "title": "Security Transformation Playbook", "file": "036-security-transformation.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-037", "title": "M&A Code Consolidation Playbook", "file": "037-ma-consolidation.md", "priority": "P2", "status": "approved"}
+      ],
+      "dependencies": ["enterprise"]
+    },
+    "ai-code-analysis": {
+      "description": "AI-powered code analysis and transformation",
+      "adrs": [
+        {"id": "ADR-038", "title": "Multi-Language Code Analysis", "file": "038-code-analysis.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-039", "title": "AI-Readiness Assessment", "file": "039-ai-readiness.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-040", "title": "Transformation Safety & Rollback", "file": "040-transformation-safety.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-041", "title": "LLM Provider Strategy", "file": "041-llm-strategy.md", "priority": "P1", "status": "approved"}
+      ],
+      "dependencies": ["foundation", "backend"]
+    },
+    "advanced": {
+      "description": "Advanced platform capabilities",
+      "adrs": [
+        {"id": "ADR-047", "title": "Refactoring Engine", "file": "047-refactoring-engine.md", "priority": "P1", "status": "approved"},
+        {"id": "ADR-052", "title": "Source Control Integration", "file": "052-source-control.md", "priority": "P0", "status": "approved"},
+        {"id": "ADR-053", "title": "PR Automation", "file": "053-pr-automation.md", "priority": "P1", "status": "approved"}
+      ],
+      "dependencies": ["ai-code-analysis"]
+    }
+  },
+  "buildOrder": [
+    "foundation",
+    "backend",
+    "portals",
+    "enterprise",
+    "ai-code-analysis",
+    "transformation-playbooks",
+    "advanced"
+  ],
+  "packageMapping": {
+    "ADR-001": ["@forge/database", "@forge/prisma"],
+    "ADR-002": ["@forge/database", "@forge/prisma", "@forge/roles"],
+    "ADR-009": ["@forge/database"],
+    "ADR-010": ["@forge/design-system"],
+    "ADR-011": ["@forge/shared-types"],
+    "ADR-015": ["@forge/realtime", "@forge/notifications"],
+    "ADR-016": ["@forge/i18n", "@forge/design-system"],
+    "ADR-019": ["@forge/ai-client"],
+    "ADR-021": ["@forge/compliance"],
+    "ADR-022": ["@forge/feature-flags"],
+    "ADR-026": ["@forge/auth", "@forge/sso"],
+    "ADR-038": ["@forge/code-analysis"],
+    "ADR-039": ["@forge/ai-readiness"],
+    "ADR-040": ["@forge/rollback"],
+    "ADR-041": ["@forge/llm-router"],
+    "ADR-052": ["@forge/source-control"],
+    "ADR-053": ["@forge/pr-automation"]
+  }
+}
