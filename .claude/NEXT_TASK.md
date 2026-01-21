@@ -7,45 +7,53 @@
 
 ## Current Task
 
-**Build `@forge/storage` package**
+**Build `@forge/auth` package**
 
 ### Instructions
 
-Create the S3/R2 object storage wrapper package for Forge Factory.
+Create the authentication core package for Forge Factory.
 
 **Files to Create:**
 ```
-packages/storage/
+packages/auth/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── storage.service.ts    # Main storage service class
-│   ├── storage.types.ts      # TypeScript interfaces
-│   ├── s3-client.ts          # S3/R2 client wrapper
-│   ├── file-utils.ts         # File utilities and helpers
-│   └── presigned.ts          # Presigned URL generation
+│   ├── auth.service.ts       # Main authentication service
+│   ├── auth.types.ts         # TypeScript interfaces
+│   ├── session.ts            # Session management
+│   ├── token.ts              # JWT token handling
+│   ├── password.ts           # Password hashing and validation
+│   ├── mfa.ts                # Multi-factor authentication
+│   └── providers/
+│       ├── index.ts          # Provider exports
+│       ├── local.ts          # Local username/password auth
+│       └── oauth.ts          # OAuth provider base
 ├── __tests__/
-│   └── storage.service.test.ts
+│   └── auth.service.test.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
 **Requirements:**
-- S3-compatible storage abstraction (works with AWS S3 and Cloudflare R2)
-- Upload, download, delete operations
-- Multipart upload support for large files
-- Presigned URL generation for direct uploads/downloads
-- File metadata retrieval
-- Bucket operations (list, create, check existence)
-- MIME type detection
-- Stream support for large files
-- Multi-tenant support with prefix isolation
+- User authentication with email/password
+- JWT access and refresh token generation
+- Session management with configurable expiry
+- Password hashing with bcrypt/argon2
+- Password validation (strength requirements)
+- Multi-factor authentication (TOTP)
+- OAuth provider framework
+- Token refresh mechanism
+- Session invalidation
+- Multi-tenant support
+- Rate limiting hooks
+- Audit logging hooks
 - 80%+ test coverage
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(storage): add @forge/storage package"`
+3. Commit: `git add . && git commit -m "feat(auth): add @forge/auth package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -57,10 +65,10 @@ packages/storage/
 - [x] @forge/database ← COMPLETED
 - [x] @forge/cache (Redis wrapper) ← COMPLETED
 - [x] @forge/queue (BullMQ wrapper) ← COMPLETED
-- [ ] @forge/storage (S3/R2 wrapper) ← CURRENT
+- [x] @forge/storage (S3/R2 wrapper) ← COMPLETED
 
 ### Phase 2: Security
-- [ ] @forge/auth (Authentication core)
+- [ ] @forge/auth (Authentication core) ← CURRENT
 - [ ] @forge/sso (SAML/OIDC integration)
 - [ ] @forge/roles (RBAC system)
 - [ ] @forge/compliance (Audit logging)
@@ -82,6 +90,36 @@ packages/storage/
 ---
 
 ## Completed
+
+### @forge/storage - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/storage/src/index.ts
+- packages/storage/src/storage.service.ts
+- packages/storage/src/storage.types.ts
+- packages/storage/src/s3-client.ts
+- packages/storage/src/file-utils.ts
+- packages/storage/src/presigned.ts
+- packages/storage/src/external.d.ts
+- packages/storage/__tests__/storage.service.test.ts
+- packages/storage/package.json
+- packages/storage/tsconfig.json
+- packages/storage/vitest.config.ts
+- packages/storage/vitest.setup.ts
+- packages/storage/README.md
+
+**Features Implemented:**
+- S3/R2/MinIO support with configurable endpoints
+- Upload, download, delete operations with streams and buffers
+- Multipart upload for large files with progress tracking
+- Presigned URL generation for direct uploads/downloads
+- File metadata retrieval and MIME type detection
+- Bucket operations (list, create, check existence)
+- Multi-tenant support with prefix isolation
+- Event listeners and statistics tracking
+- Health checks with detailed diagnostics
+- TenantStorage class for scoped operations
+- 190 tests, 88.59% coverage
 
 ### @forge/queue - COMPLETED 2026-01-21
 
