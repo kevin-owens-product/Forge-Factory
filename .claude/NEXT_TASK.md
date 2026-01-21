@@ -7,42 +7,43 @@
 
 ## Current Task
 
-**Build `@forge/cache` package**
+**Build `@forge/queue` package**
 
 ### Instructions
 
-Create the Redis caching wrapper package for Forge Factory.
+Create the BullMQ job queue wrapper package for Forge Factory.
 
 **Files to Create:**
 ```
-packages/cache/
+packages/queue/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── cache.service.ts      # Main cache service class
-│   ├── cache.types.ts        # TypeScript interfaces
-│   ├── redis-client.ts       # Redis connection management
-│   └── serialization.ts      # Serialization utilities
+│   ├── queue.service.ts      # Main queue service class
+│   ├── queue.types.ts        # TypeScript interfaces
+│   ├── worker.ts             # Worker management
+│   ├── job.ts                # Job utilities and helpers
+│   └── scheduler.ts          # Scheduled/recurring jobs
 ├── __tests__/
-│   └── cache.service.test.ts
+│   └── queue.service.test.ts
 ├── package.json
 ├── tsconfig.json
 └── README.md
 ```
 
 **Requirements:**
-- Redis connection management with configurable options
-- Get/Set/Delete operations with TTL support
-- JSON serialization/deserialization
-- Namespace support for tenant isolation
-- Health check method
-- Connection pooling support
-- Graceful shutdown support
+- BullMQ queue abstraction with configurable options
+- Job creation with priority, delay, and retry support
+- Worker management with concurrency control
+- Event listeners for job lifecycle (completed, failed, progress)
+- Scheduled/recurring jobs support
+- Job cleanup and retention policies
+- Graceful shutdown for workers
 - 80%+ test coverage
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(cache): add @forge/cache package"`
+3. Commit: `git add . && git commit -m "feat(queue): add @forge/queue package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -52,8 +53,8 @@ packages/cache/
 
 ### Phase 1: Foundation
 - [x] @forge/database ← COMPLETED
-- [ ] @forge/cache (Redis wrapper) ← CURRENT
-- [ ] @forge/queue (BullMQ wrapper)
+- [x] @forge/cache (Redis wrapper) ← COMPLETED
+- [ ] @forge/queue (BullMQ wrapper) ← CURRENT
 - [ ] @forge/storage (S3/R2 wrapper)
 
 ### Phase 2: Security
@@ -79,6 +80,33 @@ packages/cache/
 ---
 
 ## Completed
+
+### @forge/cache - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/cache/src/index.ts
+- packages/cache/src/cache.service.ts
+- packages/cache/src/cache.types.ts
+- packages/cache/src/redis-client.ts
+- packages/cache/src/serialization.ts
+- packages/cache/src/external.d.ts
+- packages/cache/__tests__/cache.service.test.ts
+- packages/cache/package.json
+- packages/cache/tsconfig.json
+- packages/cache/vitest.setup.ts
+- packages/cache/README.md
+
+**Features Implemented:**
+- Redis connection management with configurable options
+- Get/Set/Delete operations with TTL support
+- Full JSON serialization (Date, Buffer, Set, Map, BigInt)
+- Namespace support for tenant isolation
+- Batch operations (getMany, setMany, deleteMany)
+- Distributed locking with acquire/release
+- Health check with server info
+- Statistics tracking (hits, misses, hit rate, latency)
+- Graceful shutdown support
+- 102 tests, 81.22% coverage
 
 ### @forge/database - COMPLETED 2026-01-21
 
