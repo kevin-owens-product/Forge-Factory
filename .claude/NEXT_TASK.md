@@ -7,27 +7,27 @@
 
 ## Current Task
 
-**Build `@forge/roles` package**
+**Build `@forge/compliance` package**
 
 ### Instructions
 
-Create the RBAC (Role-Based Access Control) package.
+Create the compliance and audit logging package.
 
 **Files to Create:**
 ```
-packages/roles/
+packages/compliance/
 ├── src/
 │   ├── index.ts              # Export public API
-│   ├── roles.service.ts      # Main RBAC service
-│   ├── roles.types.ts        # TypeScript interfaces
-│   ├── permission.ts         # Permission management
-│   ├── role.ts               # Role management
-│   ├── policy.ts             # Policy evaluation engine
+│   ├── compliance.service.ts # Main compliance service
+│   ├── compliance.types.ts   # TypeScript interfaces
+│   ├── audit.ts              # Audit logging
+│   ├── retention.ts          # Data retention policies
+│   ├── export.ts             # Audit data export
 │   └── external.d.ts         # External dependencies types
 ├── __tests__/
-│   ├── roles.service.test.ts
-│   ├── permission.test.ts
-│   └── policy.test.ts
+│   ├── compliance.service.test.ts
+│   ├── audit.test.ts
+│   └── retention.test.ts
 ├── package.json
 ├── tsconfig.json
 ├── vitest.config.ts
@@ -35,23 +35,22 @@ packages/roles/
 ```
 
 **Requirements:**
-- Role definition and management (create, update, delete, list)
-- Permission definition (resource, action, conditions)
-- Role-permission assignment
-- User-role assignment with multi-tenancy
-- Policy evaluation engine (allow/deny rules)
-- Hierarchical roles (role inheritance)
-- Attribute-based conditions (time, resource attributes)
-- Permission caching for performance
-- Audit logging for permission changes
-- Integration with @forge/auth package
-- Multi-tenant support with namespace isolation
+- Audit event logging with structured data
+- Event types: AUTH, ACCESS, DATA_CHANGE, ADMIN_ACTION, SECURITY
+- Searchable audit log with filters (user, time, event type)
+- Data retention policies (configurable per event type)
+- Automatic cleanup of expired audit records
+- Export functionality (JSON, CSV formats)
+- Tamper-evident audit trails (hash chaining)
+- Multi-tenant support with isolation
+- Performance optimized for high write volume
+- Integration with @forge/storage for archival
 - 80%+ test coverage
 
 **After completing:**
 1. Run `pnpm tsc --noEmit` to verify compilation
 2. Run `pnpm lint` to check linting
-3. Commit: `git add . && git commit -m "feat(roles): add @forge/roles package"`
+3. Commit: `git add . && git commit -m "feat(compliance): add @forge/compliance package"`
 4. Push: `git push`
 5. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -60,16 +59,16 @@ packages/roles/
 ## Task Queue
 
 ### Phase 1: Foundation
-- [x] @forge/database ← COMPLETED
-- [x] @forge/cache (Redis wrapper) ← COMPLETED
-- [x] @forge/queue (BullMQ wrapper) ← COMPLETED
-- [x] @forge/storage (S3/R2 wrapper) ← COMPLETED
+- [x] @forge/database <- COMPLETED
+- [x] @forge/cache (Redis wrapper) <- COMPLETED
+- [x] @forge/queue (BullMQ wrapper) <- COMPLETED
+- [x] @forge/storage (S3/R2 wrapper) <- COMPLETED
 
 ### Phase 2: Security
-- [x] @forge/auth (Authentication core) ← COMPLETED
-- [x] @forge/sso (SAML/OIDC integration) ← COMPLETED
-- [ ] @forge/roles (RBAC system) ← CURRENT
-- [ ] @forge/compliance (Audit logging)
+- [x] @forge/auth (Authentication core) <- COMPLETED
+- [x] @forge/sso (SAML/OIDC integration) <- COMPLETED
+- [x] @forge/roles (RBAC system) <- COMPLETED
+- [ ] @forge/compliance (Audit logging) <- CURRENT
 
 ### Phase 3: UI Foundation
 - [ ] @forge/design-system (Component library)
@@ -88,6 +87,42 @@ packages/roles/
 ---
 
 ## Completed
+
+### @forge/roles - COMPLETED 2026-01-21
+
+**Files Created:**
+- packages/roles/src/index.ts
+- packages/roles/src/roles.service.ts
+- packages/roles/src/roles.types.ts
+- packages/roles/src/permission.ts
+- packages/roles/src/role.ts
+- packages/roles/src/policy.ts
+- packages/roles/src/external.d.ts
+- packages/roles/src/__tests__/permission.test.ts
+- packages/roles/src/__tests__/role.test.ts
+- packages/roles/src/__tests__/policy.test.ts
+- packages/roles/src/__tests__/roles.service.test.ts
+- packages/roles/package.json
+- packages/roles/tsconfig.json
+- packages/roles/vitest.config.ts
+- packages/roles/vitest.setup.ts
+
+**Features Implemented:**
+- Permission management with CRUD operations
+- Permission conditions (16 operators: equals, contains, regex, between, etc.)
+- Role management with inheritance support
+- Circular dependency detection in role inheritance
+- Policy evaluation engine (IAM-style allow/deny rules)
+- Policy statements with principals, actions, resources, conditions
+- Time-based access conditions (days, hours, timezone)
+- Multi-tenant support with namespace isolation
+- Optional caching integration with configurable TTL
+- Audit event logging with custom handlers
+- User-role assignment with scopes and expiration
+- System roles initialization (super_admin, admin, user, guest)
+- Batch authorization for multiple checks
+- Custom evaluator support for advanced use cases
+- 243 tests, 99%+ coverage
 
 ### @forge/sso - COMPLETED 2026-01-21
 
@@ -289,7 +324,7 @@ packages/roles/
 When you complete the CURRENT TASK:
 
 1. **Update this file:**
-   - Check off the completed task: `- [ ]` → `- [x]`
+   - Check off the completed task: `- [ ]` -> `- [x]`
    - Move task details to COMPLETED section
    - Copy the NEXT unchecked task to "Current Task" section
    - Write new instructions based on the task
