@@ -93,9 +93,12 @@ run_session() {
 
     # Run Claude with the prompt as argument
     # Using --permission-mode bypassPermissions for automation
-    claude -p "$prompt" --permission-mode bypassPermissions 2>&1 | tee "$log_file"
+    # Note: Avoid piping to tee as it causes hanging issues
+    claude -p "$prompt" --permission-mode bypassPermissions 2>&1 > "$log_file"
+    local exit_code=$?
 
-    local exit_code=${PIPESTATUS[0]}
+    # Display the log after completion
+    cat "$log_file"
 
     if [ $exit_code -ne 0 ]; then
         echo ""
