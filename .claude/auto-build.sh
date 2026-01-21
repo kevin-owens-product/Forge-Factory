@@ -91,8 +91,9 @@ run_session() {
     # The prompt for Claude (kept short to avoid arg length limits)
     local prompt="Autonomous build session. Read .claude/NEXT_TASK.md and complete the current task: build the package, add tests (80%+ coverage), run quality checks, commit, push. Then update NEXT_TASK.md with the next task from the queue. Stay focused on ONE task only."
 
-    # Run Claude with the prompt as argument (not piped)
-    claude -p "$prompt" --dangerously-skip-permissions 2>&1 | tee "$log_file"
+    # Run Claude with the prompt as argument
+    # Using --permission-mode bypassPermissions for automation
+    claude -p "$prompt" --permission-mode bypassPermissions 2>&1 | tee "$log_file"
 
     local exit_code=${PIPESTATUS[0]}
 
