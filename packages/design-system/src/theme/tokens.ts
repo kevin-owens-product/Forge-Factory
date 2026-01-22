@@ -4,7 +4,7 @@
  */
 
 import { DesignTokens, Theme, ThemeMode } from '../design-system.types';
-import { lightColors, darkColors, getThemeColors } from './colors';
+import { lightColors, darkColors } from './colors';
 import { typography } from './typography';
 import {
   spacing,

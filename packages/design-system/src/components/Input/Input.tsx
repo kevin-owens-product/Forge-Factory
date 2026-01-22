@@ -80,7 +80,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const inputStyles = useMemo<React.CSSProperties>(() => {
     const sizeStyle = sizeStyles[size];
     const borderColor = error ? tokens.colors.error[500] : tokens.colors.border.default;
-    const focusBorderColor = error ? tokens.colors.error[500] : tokens.colors.focus;
 
     return {
       fontFamily: tokens.typography.fontFamilies.sans,
