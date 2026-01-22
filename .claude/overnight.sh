@@ -16,10 +16,11 @@ cd "$PROJECT_ROOT"
 # macOS-compatible timeout function
 run_with_timeout() {
     local timeout=$1
-    shift
+    local logfile=$2
+    shift 2
 
-    # Start the command in background
-    "$@" &
+    # Start the command in background with output redirect
+    "$@" > "$logfile" 2>&1 &
     local pid=$!
 
     # Start a killer in background
@@ -92,7 +93,7 @@ while [ $session -lt $MAX_SESSIONS ]; do
     # Run with timeout and permission bypass
     log "🔨 Building... (timeout: $((TIMEOUT_SECONDS / 60))m)"
 
-    if run_with_timeout $TIMEOUT_SECONDS claude --dangerously-skip-permissions "$PROMPT" > "$SESSION_LOG" 2>&1; then
+    if run_with_timeout $TIMEOUT_SECONDS "$SESSION_LOG" claude --dangerously-skip-permissions -p "$PROMPT"; then
         log "✅ Session completed successfully"
         consecutive_failures=0
 
