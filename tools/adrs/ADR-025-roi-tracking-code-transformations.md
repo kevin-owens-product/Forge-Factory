@@ -878,6 +878,15 @@ interface AggregatedROIMetrics {
 - [Forrester: Developer Productivity Economics](https://www.forrester.com/report/The-Total-Economic-Impact-Of-GitHub-Enterprise-Cloud-And-Advanced-Security/RES176634)
 - [Microsoft: TypeScript ROI Study](https://www.microsoft.com/en-us/research/publication/to-type-or-not-to-type-quantifying-detectable-bugs-in-javascript/)
 - [IEEE: Test Coverage ROI](https://ieeexplore.ieee.org/document/8952365)
+- ADR-024: Change Management for Code Transformations
+- ADR-019: Enterprise Customer Management
+- ADR-027: Digital Transformation Playbook (tracks ROI for transformation programs)
+- ADR-028: Legacy System Modernization Playbook (includes ROI estimates)
+- ADR-029: Cloud Migration & Hybrid Cloud Playbook (cost optimization & ROI)
+- ADR-030: DevOps & Platform Engineering Transformation (DORA metrics & business value)
+- ADR-031: Microservices & DDD Transformation (business value tracking)
+- ADR-032: Security & Compliance Transformation (risk reduction ROI)
+- ADR-033: M&A Code Consolidation Playbook (synergy realization tracking)
 
 ## Review Date
 April 2026 (3 months)
