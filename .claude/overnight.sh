@@ -6,12 +6,36 @@ set -o pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$PROJECT_ROOT/.claude/logs"
-TIMEOUT_MINUTES=20
+TIMEOUT_SECONDS=1200  # 20 minutes
 MAX_RETRIES=3
 MAX_SESSIONS=50
 
 mkdir -p "$LOG_DIR"
 cd "$PROJECT_ROOT"
+
+# macOS-compatible timeout function
+run_with_timeout() {
+    local timeout=$1
+    shift
+
+    # Start the command in background
+    "$@" &
+    local pid=$!
+
+    # Start a killer in background
+    (sleep $timeout && kill -9 $pid 2>/dev/null) &
+    local killer=$!
+
+    # Wait for command
+    wait $pid 2>/dev/null
+    local exit_code=$?
+
+    # Kill the killer if command finished
+    kill $killer 2>/dev/null
+    wait $killer 2>/dev/null
+
+    return $exit_code
+}
 
 # Master log for overnight run
 MASTER_LOG="$LOG_DIR/overnight-$(date +%Y%m%d-%H%M%S).log"
@@ -32,7 +56,7 @@ log "=============================================="
 log "🏭 Forge Factory Overnight Build"
 log "=============================================="
 log "Project: $PROJECT_ROOT"
-log "Timeout: $TIMEOUT_MINUTES min/session"
+log "Timeout: $((TIMEOUT_SECONDS / 60)) min/session"
 log "Master Log: $MASTER_LOG"
 log "=============================================="
 
@@ -66,9 +90,9 @@ while [ $session -lt $MAX_SESSIONS ]; do
     PROMPT="Autonomous build session. Read .claude/NEXT_TASK.md and complete the current task: build the package with all files, add comprehensive tests (80%+ coverage), run quality checks (pnpm tsc --noEmit, pnpm lint), commit with descriptive message, push to remote. Then update NEXT_TASK.md: mark task complete, set next task as current. Stay focused on ONE task only. Do not ask for confirmation - just execute."
 
     # Run with timeout and permission bypass
-    log "🔨 Building... (timeout: ${TIMEOUT_MINUTES}m)"
+    log "🔨 Building... (timeout: $((TIMEOUT_SECONDS / 60))m)"
 
-    if timeout ${TIMEOUT_MINUTES}m claude -p "$PROMPT" --permission-mode bypassPermissions > "$SESSION_LOG" 2>&1; then
+    if run_with_timeout $TIMEOUT_SECONDS claude --dangerously-skip-permissions "$PROMPT" > "$SESSION_LOG" 2>&1; then
         log "✅ Session completed successfully"
         consecutive_failures=0
 
@@ -79,8 +103,8 @@ while [ $session -lt $MAX_SESSIONS ]; do
         EXIT_CODE=$?
         consecutive_failures=$((consecutive_failures + 1))
 
-        if [ $EXIT_CODE -eq 124 ]; then
-            log "⏰ Session timed out after ${TIMEOUT_MINUTES} minutes"
+        if [ $EXIT_CODE -eq 137 ]; then
+            log "⏰ Session timed out after $((TIMEOUT_SECONDS / 60)) minutes"
         else
             log "❌ Session failed (exit code: $EXIT_CODE)"
         fi
