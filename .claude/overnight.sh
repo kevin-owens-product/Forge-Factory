@@ -6,25 +6,38 @@ set -o pipefail
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 LOG_DIR="$PROJECT_ROOT/.claude/logs"
-TIMEOUT_SECONDS=1200  # 20 minutes
+TIMEOUT_SECONDS=3600  # 60 minutes per session
 MAX_RETRIES=3
 MAX_SESSIONS=50
 
 mkdir -p "$LOG_DIR"
 cd "$PROJECT_ROOT"
 
-# macOS-compatible timeout function
+# macOS-compatible timeout function with graceful shutdown
 run_with_timeout() {
     local timeout=$1
     local logfile=$2
     shift 2
 
     # Start the command in background with output redirect and stdin from /dev/null
-    "$@" < /dev/null > "$logfile" 2>&1 &
+    "$@" < /dev/null >> "$logfile" 2>&1 &
     local pid=$!
 
-    # Start a killer in background
-    (sleep $timeout && kill -9 $pid 2>/dev/null) &
+    echo "Started process $pid" >> "$logfile"
+
+    # Start a killer in background - try SIGTERM first, then SIGKILL
+    (
+        sleep $timeout
+        if kill -0 $pid 2>/dev/null; then
+            echo "Timeout reached, sending SIGTERM to $pid" >> "$logfile"
+            kill -15 $pid 2>/dev/null
+            sleep 10
+            if kill -0 $pid 2>/dev/null; then
+                echo "Process still running, sending SIGKILL" >> "$logfile"
+                kill -9 $pid 2>/dev/null
+            fi
+        fi
+    ) &
     local killer=$!
 
     # Wait for command
@@ -93,7 +106,7 @@ while [ $session -lt $MAX_SESSIONS ]; do
     # Run with timeout and permission bypass
     log "🔨 Building... (timeout: $((TIMEOUT_SECONDS / 60))m)"
 
-    if run_with_timeout $TIMEOUT_SECONDS "$SESSION_LOG" claude --dangerously-skip-permissions -p "$PROMPT"; then
+    if run_with_timeout $TIMEOUT_SECONDS "$SESSION_LOG" claude --dangerously-skip-permissions --output-format stream-json -p "$PROMPT"; then
         log "✅ Session completed successfully"
         consecutive_failures=0
 
