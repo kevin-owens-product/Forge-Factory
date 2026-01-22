@@ -88,7 +88,7 @@ while [ $session -lt $MAX_SESSIONS ]; do
     log "📋 Task: $TASK"
     log "📁 Log: $SESSION_LOG"
 
-    PROMPT="Autonomous build session. Read .claude/NEXT_TASK.md and complete the current task: build the package with all files, add comprehensive tests (80%+ coverage), run quality checks (pnpm tsc --noEmit, pnpm lint), commit with descriptive message, push to remote. Then update NEXT_TASK.md: mark task complete, set next task as current. Stay focused on ONE task only. Do not ask for confirmation - just execute."
+    PROMPT="Read .claude/NEXT_TASK.md. Build the current task package with tests (80%+ coverage). Commit and push. Update NEXT_TASK.md when done."
 
     # Run with timeout and permission bypass
     log "🔨 Building... (timeout: $((TIMEOUT_SECONDS / 60))m)"
