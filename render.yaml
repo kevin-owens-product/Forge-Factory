@@ -126,19 +126,25 @@ services:
 # ===========================================
 # Databases
 # ===========================================
+  # ===========================================
+  # Redis (Cache & Queue)
+  # ===========================================
+  - type: redis
+    name: forge-redis
+    plan: standard
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+# ===========================================
+# Databases
+# ===========================================
 databases:
   - name: forge-db
     plan: standard
     region: oregon
     postgresMajorVersion: 16
-    ipAllowList: []  # Only internal access
-
-  - name: forge-redis
-    type: redis
-    plan: standard
-    region: oregon
-    maxmemoryPolicy: allkeys-lru
-    ipAllowList: []  # Only internal access
+    ipAllowList: []
 
 # ===========================================
 # Environment Groups
