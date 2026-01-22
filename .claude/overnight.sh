@@ -45,7 +45,7 @@ log() {
 }
 
 get_task() {
-    grep -A1 "## Current Task" .claude/NEXT_TASK.md 2>/dev/null | tail -1 | sed 's/\*//g' | xargs
+    grep -A3 "## Current Task" .claude/NEXT_TASK.md 2>/dev/null | grep -v "^$" | grep -v "## Current Task" | head -1 | sed 's/\*//g' | xargs
 }
 
 is_complete() {
