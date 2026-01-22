@@ -93,7 +93,7 @@ while [ $session -lt $MAX_SESSIONS ]; do
     # Run with timeout and permission bypass
     log "🔨 Building... (timeout: $((TIMEOUT_SECONDS / 60))m)"
 
-    if run_with_timeout $TIMEOUT_SECONDS "$SESSION_LOG" claude --dangerously-skip-permissions -p "$PROMPT"; then
+    if run_with_timeout $TIMEOUT_SECONDS "$SESSION_LOG" claude --dangerously-skip-permissions -p --output-format stream-json "$PROMPT"; then
         log "✅ Session completed successfully"
         consecutive_failures=0
 
