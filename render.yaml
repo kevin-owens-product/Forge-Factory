@@ -52,9 +52,8 @@ services:
   # ===========================================
   # User Portal (React Frontend)
   # ===========================================
-  - type: web
+  - type: static_site
     name: forge-portal
-    runtime: static
     region: oregon
     buildCommand: pnpm install --frozen-lockfile && pnpm --filter @forge/portal build
     staticPublishPath: apps/portal/dist
@@ -88,9 +87,8 @@ services:
   # ===========================================
   # Admin Portal (React Frontend)
   # ===========================================
-  - type: web
+  - type: static_site
     name: forge-admin
-    runtime: static
     region: oregon
     buildCommand: pnpm install --frozen-lockfile && pnpm --filter @forge/admin build
     staticPublishPath: apps/admin/dist
