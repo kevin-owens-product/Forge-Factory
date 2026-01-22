@@ -19,8 +19,8 @@ run_with_timeout() {
     local logfile=$2
     shift 2
 
-    # Start the command in background with output redirect
-    "$@" > "$logfile" 2>&1 &
+    # Start the command in background with output redirect and stdin from /dev/null
+    "$@" < /dev/null > "$logfile" 2>&1 &
     local pid=$!
 
     # Start a killer in background
