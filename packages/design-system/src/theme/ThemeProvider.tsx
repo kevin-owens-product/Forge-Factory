@@ -3,7 +3,7 @@
  * @description Theme provider component
  */
 
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -13,7 +13,7 @@ import React, {
   ReactNode,
 } from 'react';
 import { Theme, ThemeMode, ThemeContextValue } from '../design-system.types';
-import { createTheme, getDesignTokens, generateCSSVariables } from './tokens';
+import { getDesignTokens, generateCSSVariables } from './tokens';
 
 /**
  * Theme context
@@ -79,7 +79,6 @@ export function ThemeProvider({
   children,
   defaultMode = 'system',
   disablePersistence = false,
-  storageKey = THEME_STORAGE_KEY,
 }: ThemeProviderProps): JSX.Element {
   // Initialize mode from storage or default
   const [mode, setModeState] = useState<ThemeMode>(() => {
