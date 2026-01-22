@@ -213,7 +213,7 @@ services:
 databases:
   - name: forge-db
     region: oregon
-    plan: standard
+    plan: basic-4gb
     databaseName: forge_factory
     user: forge
     postgresMajorVersion: "16"
