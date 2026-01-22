@@ -1,0 +1,46 @@
+{
+  "name": "@forge/compliance",
+  "version": "1.0.0",
+  "description": "Compliance and audit logging for Forge Factory",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@forge/errors": "workspace:*"
+  },
+  "peerDependencies": {
+    "@forge/storage": "workspace:*"
+  },
+  "peerDependenciesMeta": {
+    "@forge/storage": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "forge",
+    "compliance",
+    "audit",
+    "logging",
+    "security"
+  ],
+  "author": "Forge Factory",
+  "license": "MIT"
+}
