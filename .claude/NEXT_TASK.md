@@ -7,22 +7,22 @@
 
 ## Current Task
 
-**Create render.yaml blueprint (define all services)**
+**Deploy to Render staging environment**
 
 ### Instructions
 
-Create a render.yaml blueprint file for deploying the Forge Factory monorepo to Render.
+Deploy the Forge Factory application to a Render staging environment.
 
 **Requirements:**
-- Define all services (api, portal, admin)
-- Configure environment variables
-- Set up health check endpoints
-- Configure build and start commands
-- Define database and Redis services
+- Create a new Render blueprint using render.yaml
+- Configure staging environment variables
+- Deploy all services (api, portal, admin)
+- Verify database migrations run successfully
+- Confirm Redis connection
 
 **After completing:**
-1. Verify render.yaml syntax
-2. Commit: `git add render.yaml && git commit -m "infra: add render.yaml deployment blueprint"`
+1. Verify all services are running
+2. Commit any changes needed
 3. Push: `git push`
 4. Update this file: move task to COMPLETED, set next task as CURRENT
 
@@ -57,8 +57,8 @@ Create a render.yaml blueprint file for deploying the Forge Factory monorepo to 
 - [x] AI-Readiness Assessment (ADR-039) <- COMPLETED
 
 ### Phase 6: Deployment & Production Testing
-- [ ] Create render.yaml blueprint (define all services) <- CURRENT
-- [ ] Deploy to Render staging environment
+- [x] Create render.yaml blueprint (define all services) <- COMPLETED
+- [ ] Deploy to Render staging environment <- CURRENT
 - [ ] Run E2E tests against staging
 - [ ] Deploy to Render production
 - [ ] Run production smoke tests
@@ -67,6 +67,25 @@ Create a render.yaml blueprint file for deploying the Forge Factory monorepo to 
 ---
 
 ## Completed
+
+### render.yaml blueprint - COMPLETED 2026-01-21
+
+**Files Updated:**
+- render.yaml
+
+**Features Configured:**
+- API service (NestJS backend) with health check at /api/docs
+- Portal static site (React frontend) with security headers
+- Admin static site (React frontend) with security headers
+- Background workers for BullMQ queue processing
+- Redis service for caching and queue backend
+- PostgreSQL 16 database (forge_factory)
+- Cron jobs for cleanup (daily) and metrics (every 15 min)
+- Environment variable groups for shared configuration
+- Security headers: X-Frame-Options, X-Content-Type-Options, CSP, X-XSS-Protection
+- Auto-deploy enabled for all services
+- Prisma client generation in build commands
+- JWT, session, and encryption secrets with auto-generation
 
 ### @forge/ai-readiness - COMPLETED 2026-01-21
 
