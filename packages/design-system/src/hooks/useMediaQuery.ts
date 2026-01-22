@@ -3,7 +3,7 @@
  * @description Media query hook
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { breakpoints } from '../theme/spacing';
 
 /**
